@@ -1,0 +1,14 @@
+/.DS_Store
+
+/.idea/
+*.iml
+*.iws
+*.ipr
+
+/.gradle/
+/build/
+
+node_modules
+/integration-test-screenshots
+
+/db

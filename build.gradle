@@ -1,0 +1,44 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.3.RELEASE'
+    id 'java'
+    id 'idea'
+}
+
+def defaultEncoding = 'UTF-8'
+def jdkVersion = '1.8'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
+
+jar {
+    baseName = 'otameshiwebbapp'
+    version =  '0.0.1-SNAPSHOT'
+}
+
+compileJava {
+    options.encoding = defaultEncoding
+}
+
+compileTestJava {
+    options.encoding = defaultEncoding
+}
+
+idea {
+    project {
+        jdkName = jdkVersion
+        languageLevel = jdkVersion
+    }
+}
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
