@@ -24,22 +24,14 @@ compileTestJava {
     options.encoding = defaultEncoding
 }
 
-idea {
-    project {
-        jdkName = jdkVersion
-        languageLevel = jdkVersion
-    }
-}
-
-
 repositories {
     mavenCentral()
     jcenter()
 }
 
 dependencies {
+    compile("org.springframework.boot:spring-boot-devtools")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
-
