@@ -4,6 +4,7 @@
 *.iml
 *.iws
 *.ipr
+/out
 
 /.gradle/
 /build/
