@@ -11,11 +11,11 @@ public class StaticPageController {
 
     @RequestMapping("/")
     public ModelAndView home() {
-        return new ModelAndView("home");
+        return new ModelAndView("static_pages/home");
     }
 
     @RequestMapping("/help")
     public ModelAndView help() {
-        return new ModelAndView("help");
+        return new ModelAndView("static_pages/help");
     }
 }
