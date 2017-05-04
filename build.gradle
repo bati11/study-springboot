@@ -1,6 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '1.5.3.RELEASE'
-    id 'java'
+    id 'groovy'
     id 'idea'
 }
 
@@ -24,6 +24,22 @@ compileTestJava {
     options.encoding = defaultEncoding
 }
 
+sourceSets {
+    integrationTest {
+        groovy {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/groovy')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
 repositories {
     mavenCentral()
     jcenter()
@@ -34,4 +50,24 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+check.dependsOn integrationTest
+
+idea {
+    project {
+        jdkName = jdkVersion
+        languageLevel = jdkVersion
+    }
+    module {
+        inheritOutputDirs = false
+        scopes.TEST.plus += [ configurations.integrationTestCompile]
+    }
 }
