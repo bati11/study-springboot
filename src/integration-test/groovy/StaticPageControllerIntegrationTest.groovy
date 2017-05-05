@@ -22,8 +22,11 @@ class StaticPageControllerIntegrationTest extends Specification {
     @Shared
     MockMvc mvc;
 
+    def baseTitle;
+
     def setup() throws Exception {
         mvc = webAppContextSetup(context).build()
+        baseTitle = "Spring Boot Sample App"
     }
 
     def "should get home"() {
@@ -31,6 +34,7 @@ class StaticPageControllerIntegrationTest extends Specification {
         mvc.perform(get("/static_pages/"))
             .andExpect(status().isOk())
             .andExpect(view().name("static_pages/home"))
+            .andExpect(xpath("//title/text()").string("Home | $baseTitle"))
     }
 
     def "should get help"() {
@@ -38,6 +42,7 @@ class StaticPageControllerIntegrationTest extends Specification {
         mvc.perform(get("/static_pages/help"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/help"))
+                .andExpect(xpath("//title/text()").string("Help | $baseTitle"))
     }
 
     def "should get about"() {
@@ -45,5 +50,6 @@ class StaticPageControllerIntegrationTest extends Specification {
         mvc.perform(get("/static_pages/about"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/about"))
+                .andExpect(xpath("//title/text()").string("About | $baseTitle"))
     }
 }
