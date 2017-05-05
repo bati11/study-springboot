@@ -37,4 +37,10 @@ class StaticPageControllerIntegrationTest extends Specification {
         mvc.perform(get("/static_pages/help"))
                 .andExpect(status().isOk())
     }
+
+    def "should get about"() {
+        expect:
+        mvc.perform(get("/static_pages/about"))
+                .andExpect(status().isOk())
+    }
 }

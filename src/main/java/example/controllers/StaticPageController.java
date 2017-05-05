@@ -18,4 +18,9 @@ public class StaticPageController {
     public ModelAndView help() {
         return new ModelAndView("static_pages/help");
     }
+
+    @RequestMapping("/about")
+    public ModelAndView about() {
+        return new ModelAndView("static_pages/about");
+    }
 }
