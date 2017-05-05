@@ -30,17 +30,20 @@ class StaticPageControllerIntegrationTest extends Specification {
         expect:
         mvc.perform(get("/static_pages/"))
             .andExpect(status().isOk())
+            .andExpect(view().name("static_pages/home"))
     }
 
     def "should get help"() {
         expect:
         mvc.perform(get("/static_pages/help"))
                 .andExpect(status().isOk())
+                .andExpect(view().name("static_pages/help"))
     }
 
     def "should get about"() {
         expect:
         mvc.perform(get("/static_pages/about"))
                 .andExpect(status().isOk())
+                .andExpect(view().name("static_pages/about"))
     }
 }
