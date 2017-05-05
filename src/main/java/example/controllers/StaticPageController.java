@@ -10,6 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class StaticPageController {
 
     @RequestMapping("/")
+    public String root() {
+        return "forward:home";
+    }
+
+    @RequestMapping("/home")
     public ModelAndView home() {
         return new ModelAndView("static_pages/home");
     }
