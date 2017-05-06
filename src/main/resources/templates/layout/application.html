@@ -3,24 +3,10 @@
 <head>
     <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">Spring Boot Sample App</title>
     <link rel="stylesheet" href="dummy.css" th:href="@{/css/style.css}"/>
-    <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
-    </script>
-    <![endif]-->
+    <meta th:replace="layout/shim" />
 </head>
 <body>
-<header class="navbar navbar-fixed-top navbar-inverse">
-    <div class="container">
-        <a id="logo" alt="sample app" href="#" >sample app</a>
-        <nav>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" >Home</a></li>
-                <li><a href="#" >Help</a></li>
-                <li><a href="#" >Log in</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+<div th:replace="layout/header"></div>
 <div class="container">
     <div layout:fragment="content" th:remove="tag"></div>
 </div>
