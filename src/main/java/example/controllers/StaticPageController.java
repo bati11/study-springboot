@@ -6,15 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("static_pages")
 public class StaticPageController {
 
     @RequestMapping("/")
-    public String root() {
-        return "forward:home";
-    }
-
-    @RequestMapping("/home")
     public ModelAndView home() {
         return new ModelAndView("static_pages/home");
     }

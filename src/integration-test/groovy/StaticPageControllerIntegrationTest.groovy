@@ -31,15 +31,16 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get home"() {
         expect:
-        mvc.perform(get("/static_pages/home"))
+        mvc.perform(get("/"))
             .andExpect(status().isOk())
             .andExpect(view().name("static_pages/home"))
             .andExpect(xpath("//title/text()").string("Home | $baseTitle"))
+            .andReturn()
     }
 
     def "should get help"() {
         expect:
-        mvc.perform(get("/static_pages/help"))
+        mvc.perform(get("/help"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/help"))
                 .andExpect(xpath("//title/text()").string("Help | $baseTitle"))
@@ -47,7 +48,7 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get about"() {
         expect:
-        mvc.perform(get("/static_pages/about"))
+        mvc.perform(get("/about"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/about"))
                 .andExpect(xpath("//title/text()").string("About | $baseTitle"))
@@ -55,7 +56,7 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get contact"() {
         expect:
-        mvc.perform(get("/static_pages/contact"))
+        mvc.perform(get("/contact"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/contact"))
                 .andExpect(xpath("//title/text()").string("Contact | $baseTitle"))
