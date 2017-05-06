@@ -1,6 +1,8 @@
 import example.Application
+import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.context.web.WebDelegatingSmartContextLoader
 import org.springframework.test.web.servlet.MockMvc
@@ -13,6 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebAppConfiguration
+@TestPropertySource("/application-integrationtest.properties")
 @ContextConfiguration(loader = WebDelegatingSmartContextLoader, classes = Application)
 class StaticPageControllerIntegrationTest extends Specification {
 
@@ -31,34 +34,41 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get home"() {
         expect:
-        mvc.perform(get("/"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("static_pages/home"))
-            .andExpect(xpath("//title/text()").string("Home | $baseTitle"))
-            .andReturn()
+        def content = mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("static_pages/home"))
+                .andReturn().response.contentAsString
+        def doc = Jsoup.parse(content)
+        doc.select('title').text() == "Home | $baseTitle"
     }
 
     def "should get help"() {
         expect:
-        mvc.perform(get("/help"))
+        def content = mvc.perform(get("/help"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/help"))
-                .andExpect(xpath("//title/text()").string("Help | $baseTitle"))
+                .andReturn().response.contentAsString
+        def doc = Jsoup.parse(content)
+        doc.select('title').text() == "Help | $baseTitle"
     }
 
     def "should get about"() {
         expect:
-        mvc.perform(get("/about"))
+        def content = mvc.perform(get("/about"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/about"))
-                .andExpect(xpath("//title/text()").string("About | $baseTitle"))
+                .andReturn().response.contentAsString
+        def doc = Jsoup.parse(content)
+        doc.select('title').text() == "About | $baseTitle"
     }
 
     def "should get contact"() {
         expect:
-        mvc.perform(get("/contact"))
+        def content = mvc.perform(get("/contact"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("static_pages/contact"))
-                .andExpect(xpath("//title/text()").string("Contact | $baseTitle"))
+                .andReturn().response.contentAsString
+        def doc = Jsoup.parse(content)
+        doc.select('title').text() == "Contact | $baseTitle"
     }
 }
