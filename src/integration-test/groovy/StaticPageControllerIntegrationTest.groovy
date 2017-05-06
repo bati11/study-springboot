@@ -52,4 +52,12 @@ class StaticPageControllerIntegrationTest extends Specification {
                 .andExpect(view().name("static_pages/about"))
                 .andExpect(xpath("//title/text()").string("About | $baseTitle"))
     }
+
+    def "should get contact"() {
+        expect:
+        mvc.perform(get("/static_pages/contact"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("static_pages/contact"))
+                .andExpect(xpath("//title/text()").string("Contact | $baseTitle"))
+    }
 }

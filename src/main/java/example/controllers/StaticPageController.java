@@ -28,4 +28,9 @@ public class StaticPageController {
     public ModelAndView about() {
         return new ModelAndView("static_pages/about");
     }
+
+    @RequestMapping("/contact")
+    public ModelAndView contact() {
+        return new ModelAndView("static_pages/contact");
+    }
 }
