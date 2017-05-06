@@ -31,7 +31,7 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get home"() {
         expect:
-        mvc.perform(get("/static_pages/"))
+        mvc.perform(get("/static_pages/home"))
             .andExpect(status().isOk())
             .andExpect(view().name("static_pages/home"))
             .andExpect(xpath("//title/text()").string("Home | $baseTitle"))
