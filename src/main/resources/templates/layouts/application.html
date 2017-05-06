@@ -3,13 +3,13 @@
 <head>
     <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">Spring Boot Sample App</title>
     <link rel="stylesheet" href="dummy.css" th:href="@{/css/style.css}"/>
-    <meta th:replace="layouts/shim" />
+    <meta th:replace="layouts/_shim" />
 </head>
 <body>
-<div th:replace="layouts/header"></div>
+<div th:replace="layouts/_header"></div>
 <div class="container">
     <div layout:fragment="content" th:remove="tag"></div>
-    <div th:replace="layouts/footer"></div>
+    <div th:replace="layouts/_footer"></div>
 </div>
 </body>
 </html>
