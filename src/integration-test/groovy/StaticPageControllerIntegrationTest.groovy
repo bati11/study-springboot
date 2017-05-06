@@ -34,41 +34,37 @@ class StaticPageControllerIntegrationTest extends Specification {
 
     def "should get home"() {
         expect:
-        def content = mvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("static_pages/home"))
-                .andReturn().response.contentAsString
-        def doc = Jsoup.parse(content)
+        def result = mvc.perform(get("/")).andReturn()
+        result.modelAndView.viewName == "static_pages/home"
+
+        def doc = Jsoup.parse(result.response.contentAsString)
         doc.select('title').text() == "Home | $baseTitle"
     }
 
     def "should get help"() {
         expect:
-        def content = mvc.perform(get("/help"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("static_pages/help"))
-                .andReturn().response.contentAsString
-        def doc = Jsoup.parse(content)
+        def result = mvc.perform(get("/help")).andReturn()
+        result.modelAndView.viewName == "static_pages/help"
+
+        def doc = Jsoup.parse(result.response.contentAsString)
         doc.select('title').text() == "Help | $baseTitle"
     }
 
     def "should get about"() {
         expect:
-        def content = mvc.perform(get("/about"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("static_pages/about"))
-                .andReturn().response.contentAsString
-        def doc = Jsoup.parse(content)
+        def result = mvc.perform(get("/about")).andReturn()
+        result.modelAndView.viewName == "static_pages/about"
+
+        def doc = Jsoup.parse(result.response.contentAsString)
         doc.select('title').text() == "About | $baseTitle"
     }
 
     def "should get contact"() {
         expect:
-        def content = mvc.perform(get("/contact"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("static_pages/contact"))
-                .andReturn().response.contentAsString
-        def doc = Jsoup.parse(content)
+        def result = mvc.perform(get("/contact")).andReturn()
+        result.modelAndView.viewName == "static_pages/contact"
+
+        def doc = Jsoup.parse(result.response.contentAsString)
         doc.select('title').text() == "Contact | $baseTitle"
     }
 }
