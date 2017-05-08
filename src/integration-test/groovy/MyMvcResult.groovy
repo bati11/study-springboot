@@ -12,6 +12,9 @@ class MyMvcResult {
     }
 
     def getViewName() {
+        assert mvcResult != null
+        assert mvcResult.response.status == 200
+        assert mvcResult.modelAndView != null
         return mvcResult.modelAndView.viewName
     }
 
