@@ -2,7 +2,7 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
 
     def "should get input"() {
         expect:
-        with(get("/users/input")) {
+        with(get("/signup")) {
             viewName == "users/input"
         }
     }
