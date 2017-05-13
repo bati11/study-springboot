@@ -1,7 +1,14 @@
+buildscript {
+    dependencies {
+        classpath 'com.h2database:h2:1.4.191'
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '1.5.3.RELEASE'
     id 'groovy'
     id 'idea'
+    id "org.flywaydb.flyway" version "4.2.0"
 }
 
 def defaultEncoding = 'UTF-8'
@@ -53,6 +60,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile('com.h2database:h2:1.4.195')
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile 'org.codehaus.groovy:groovy-all:2.4.11'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
@@ -65,6 +73,11 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 check.dependsOn integrationTest
+
+flyway {
+    url = 'jdbc:h2:file:~/dev/data/study_springboot'
+    user = 'sa'
+}
 
 idea {
     project {
