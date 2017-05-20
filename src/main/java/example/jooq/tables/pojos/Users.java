@@ -23,13 +23,14 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Users implements Serializable {
 
-    private static final long serialVersionUID = -2113245302;
+    private static final long serialVersionUID = -1247636614;
 
     private final Integer   id;
     private final String    name;
     private final String    email;
     private final Timestamp createdAt;
     private final Timestamp updatedAt;
+    private final String    passwordDigest;
 
     public Users(Users value) {
         this.id = value.id;
@@ -37,6 +38,7 @@ public class Users implements Serializable {
         this.email = value.email;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
+        this.passwordDigest = value.passwordDigest;
     }
 
     public Users(
@@ -44,13 +46,15 @@ public class Users implements Serializable {
         String    name,
         String    email,
         Timestamp createdAt,
-        Timestamp updatedAt
+        Timestamp updatedAt,
+        String    passwordDigest
     ) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.passwordDigest = passwordDigest;
     }
 
     public Integer getId() {
@@ -73,6 +77,10 @@ public class Users implements Serializable {
         return this.updatedAt;
     }
 
+    public String getPasswordDigest() {
+        return this.passwordDigest;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Users (");
@@ -82,6 +90,7 @@ public class Users implements Serializable {
         sb.append(", ").append(email);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
+        sb.append(", ").append(passwordDigest);
 
         sb.append(")");
         return sb.toString();

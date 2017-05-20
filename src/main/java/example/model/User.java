@@ -1,11 +1,18 @@
 package example.model;
 
 
-import lombok.Value;
+import lombok.Getter;
 
-@Value
+@Getter
 public class User {
     private int id;
     private String name;
     private String email;
+    private PasswordDigest passwordDigest;
+
+    public User(String name, String email, PasswordDigest passwordDigest) {
+        this.name = name;
+        this.email = email;
+        this.passwordDigest = passwordDigest;
+    }
 }

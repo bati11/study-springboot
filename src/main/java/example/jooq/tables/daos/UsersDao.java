@@ -92,4 +92,11 @@ public class UsersDao extends DAOImpl<UsersRecord, example.jooq.tables.pojos.Use
     public List<example.jooq.tables.pojos.Users> fetchByUpdatedAt(Timestamp... values) {
         return fetch(Users.USERS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>PASSWORD_DIGEST IN (values)</code>
+     */
+    public List<example.jooq.tables.pojos.Users> fetchByPasswordDigest(String... values) {
+        return fetch(Users.USERS.PASSWORD_DIGEST, values);
+    }
 }

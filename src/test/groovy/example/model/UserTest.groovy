@@ -9,11 +9,12 @@ class UserTest extends Specification {
     User user
 
     def setup() {
-        user = new User(1, 'hoge', 'fuga@example.com')
+        user = new User('hoge', 'fuga@example.com', new PasswordDigest('password'))
     }
 
     def 'sample test'() {
         expect:
         user.getName() == 'hoge'
+        user.getPasswordDigest() != 'password'
     }
 }
