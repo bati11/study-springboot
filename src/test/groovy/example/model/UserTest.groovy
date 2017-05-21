@@ -17,4 +17,10 @@ class UserTest extends Specification {
         user.getName() == 'hoge'
         user.getPasswordDigest() != 'password'
     }
+
+    def 'authentication test'() {
+        expect:
+        user.authenticate('hogehoge') == false
+        user.authenticate('password') == true
+    }
 }

@@ -15,4 +15,8 @@ public class User {
         this.email = email;
         this.passwordDigest = passwordDigest;
     }
+
+    public boolean authenticate(String rawPassword) {
+        return passwordDigest.equals(new PasswordDigest(rawPassword));
+    }
 }
