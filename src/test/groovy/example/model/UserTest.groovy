@@ -12,7 +12,7 @@ class UserTest extends Specification {
         user = new User('hoge', 'fuga@example.com', new PasswordDigest('password'))
     }
 
-    def 'sample test'() {
+    def 'users properties'() {
         expect:
         user.getName() == 'hoge'
         user.getPasswordDigest() != 'password'
