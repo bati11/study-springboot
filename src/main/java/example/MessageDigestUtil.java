@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MessageDigestUtil {
     public static String sha256(String raw) {
+        if (raw == null || "".equals(raw)) return "";
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");

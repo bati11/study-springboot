@@ -2,6 +2,7 @@ package example.model;
 
 
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
 public class User {
@@ -10,13 +11,17 @@ public class User {
     private String email;
     private PasswordDigest passwordDigest;
 
-    public User(String name, String email, PasswordDigest passwordDigest) {
+    public User(@NonNull String name, @NonNull String email, @NonNull PasswordDigest passwordDigest) {
         this.name = name;
         this.email = email;
         this.passwordDigest = passwordDigest;
     }
 
     public boolean authenticate(String rawPassword) {
-        return passwordDigest.equals(new PasswordDigest(rawPassword));
+        try {
+            return passwordDigest.equals(new PasswordDigest(rawPassword));
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 }

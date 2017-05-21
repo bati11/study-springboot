@@ -2,14 +2,13 @@ package example.model;
 
 import example.MessageDigestUtil;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.NonNull;
 
-@Getter
 @EqualsAndHashCode
 public class PasswordDigest {
     private String value;
 
-    public PasswordDigest(String rawPassword) {
+    public PasswordDigest(@NonNull String rawPassword) {
         this.value = MessageDigestUtil.sha256(rawPassword);
     }
 }

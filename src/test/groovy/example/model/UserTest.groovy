@@ -20,6 +20,8 @@ class UserTest extends Specification {
 
     def 'authentication test'() {
         expect:
+        user.authenticate(null) == false
+        user.authenticate('') == false
         user.authenticate('hogehoge') == false
         user.authenticate('password') == true
     }
