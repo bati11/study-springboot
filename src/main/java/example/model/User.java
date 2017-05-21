@@ -27,15 +27,17 @@ public class User {
         return result;
     }
 
-    public User(@NonNull String name, @NonNull String email, @NonNull PasswordDigest passwordDigest) {
-        this.name = name;
-        this.email = email;
-        this.passwordDigest = passwordDigest;
+    public static User create(@NonNull String name, @NonNull String email, @NonNull PasswordDigest passwordDigest) {
+        User result = new User();
+        result.name = name;
+        result.email = email;
+        result.passwordDigest = passwordDigest;
+        return result;
     }
 
     public boolean authenticate(String rawPassword) {
         try {
-            return passwordDigest.equals(new PasswordDigest(rawPassword));
+            return passwordDigest.equals(PasswordDigest.create(rawPassword));
         } catch (NullPointerException e) {
             return false;
         }

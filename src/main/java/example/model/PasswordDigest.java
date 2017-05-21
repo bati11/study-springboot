@@ -13,12 +13,14 @@ public class PasswordDigest {
     private PasswordDigest() {}
 
     public static PasswordDigest fromDigest(@NonNull String digest) {
-        PasswordDigest self = new PasswordDigest();
-        self.value = digest;
-        return self;
+        PasswordDigest result = new PasswordDigest();
+        result.value = digest;
+        return result;
     }
 
-    public PasswordDigest(@NonNull String rawPassword) {
-        this.value = MessageDigestUtil.sha256(rawPassword);
+    public static PasswordDigest create(@NonNull String rawPassword) {
+        PasswordDigest result = new PasswordDigest();
+        result.value = MessageDigestUtil.sha256(rawPassword);
+        return result;
     }
 }

@@ -9,7 +9,7 @@ class UserTest extends Specification {
     User user
 
     def setup() {
-        user = new User('hoge', 'fuga@example.com', new PasswordDigest('password'))
+        user = User.create('hoge', 'fuga@example.com', PasswordDigest.create('password'))
     }
 
     def 'users properties'() {
