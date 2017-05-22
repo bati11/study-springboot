@@ -5,10 +5,18 @@ import java.security.NoSuchAlgorithmException;
 
 public class MessageDigestUtil {
     public static String sha256(String raw) {
+        return digest(raw, "SHA-256");
+    }
+
+    public static String md5(String raw) {
+        return digest(raw, "MD5");
+    }
+
+    private static String digest(String raw, String algorithm) {
         if (raw == null || "".equals(raw)) return "";
         MessageDigest md;
         try {
-            md = MessageDigest.getInstance("SHA-256");
+            md = MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
