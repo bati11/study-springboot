@@ -33,6 +33,7 @@ public class GravatarProcessor extends AbstractAttributeModelProcessor {
 
         IModelFactory modelFactory = context.getModelFactory();
         model.replace(0, modelFactory.createOpenElementTag("img", "src", gravatarUrl));
+        model.remove(1);
         model.replace(model.size() - 1, modelFactory.createCloseElementTag("img"));
     }
 
