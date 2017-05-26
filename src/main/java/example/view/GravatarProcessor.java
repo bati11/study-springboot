@@ -15,6 +15,7 @@ import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,15 +37,34 @@ public class GravatarProcessor extends AbstractAttributeModelProcessor {
         );
     }
 
+    /**
+     * @param attributeValue ex) "user=${user},size=120"  "size" is optional.
+     */
     @Override
     protected void doProcess(ITemplateContext context, IModel model, AttributeName attributeName, String attributeValue, IElementModelStructureHandler structureHandler) {
+        HashMap<String, String> params = Arrays.stream(attributeValue.split(","))
+                .reduce(new HashMap<String, String>(),
+                        (acc, v) -> {
+                            String[] ss = v.split("=");
+                            acc.put(ss[0], ss[1]);
+                            return acc;
+                        },
+                        (r1, r2) -> {
+                            for (Map.Entry<String, String> entry : r2.entrySet()) {
+                                r1.putIfAbsent(entry.getKey(), entry.getValue());
+                            }
+                            return r1;
+                        });
+        String userValue = params.get("user");
+        String size = params.getOrDefault("size", "80");
+
         IEngineConfiguration configuration = context.getConfiguration();
         IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(configuration);
-        IStandardExpression expression = expressionParser.parseExpression(context, attributeValue);
+        IStandardExpression expression = expressionParser.parseExpression(context, userValue);
         User user = (User)expression.execute(context);
 
         String gravatarId = MessageDigestUtil.md5(user.getEmail());
-        String gravatarUrl = "https://secure.gravatar.com/avatar/" + gravatarId;
+        String gravatarUrl = "https://secure.gravatar.com/avatar/" + gravatarId + "?s=" + size;
 
         IModelFactory modelFactory = context.getModelFactory();
         Map<String, String> attributes = new HashMap<>();
