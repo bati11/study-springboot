@@ -1,9 +1,11 @@
 package example.controllers;
 
 import example.controllers.exceptions.NotFoundException;
+import example.controllers.forms.UserForm;
 import example.model.User;
 import example.repositories.UserRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,8 +22,13 @@ public class UsersController {
         this.userRepository = userRepository;
     }
 
-    @RequestMapping("/signup")
-    public ModelAndView input() {
+    @ModelAttribute
+    UserForm setUpForm() {
+        return new UserForm();
+    }
+
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public ModelAndView input(UserForm form) {
         return new ModelAndView("users/input");
     }
 
@@ -32,5 +39,11 @@ public class UsersController {
         ModelAndView modelAndView = new ModelAndView("users/show");
         modelAndView.addObject("user", user);
         return modelAndView;
+    }
+
+    @RequestMapping(path = "/users", method = RequestMethod.POST)
+    public ModelAndView add(UserForm form) {
+        System.out.println(form);
+        return null;
     }
 }
