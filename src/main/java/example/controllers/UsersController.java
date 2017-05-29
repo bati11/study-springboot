@@ -5,6 +5,8 @@ import example.controllers.forms.UserForm;
 import example.model.User;
 import example.repositories.UserRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +44,10 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users", method = RequestMethod.POST)
-    public ModelAndView add(UserForm form) {
-        System.out.println(form);
+    public ModelAndView add(@Validated UserForm form, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("users/input");
+        }
         return null;
     }
 }

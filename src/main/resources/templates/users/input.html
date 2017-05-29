@@ -10,15 +10,19 @@
     <div class="col-md-6 col-md-offset-3">
         <form th:action="@{/users}" th:object="${userForm}" class="new_user" id="new_user" method="post">
             <label for="user_name">Name</label>
+            <span th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}">Error</span>
             <input id="user_name" name="name" type="text" />
 
             <label for="user_email">Email</label>
+            <span th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}">Error</span>
             <input id="user_email" name="email" type="text" />
 
             <label for="user_password">Password</label>
+            <span th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}">Error</span>
             <input id="user_password" name="password" type="password" />
 
             <label for="user_password_confirmation">Confirmation</label>
+            <span th:if="${#fields.hasErrors('passwordConfirmation')}" class="text-danger" th:errors="*{passwordConfirmation}">Error</span>
             <input id="user_password_confirmation" name="passwordConfirmation" type="password" />
 
             <input class="btn btn-primary" name="commit" type="submit" value="Create my account" />
