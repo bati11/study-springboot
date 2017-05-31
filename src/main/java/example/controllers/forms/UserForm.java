@@ -21,9 +21,9 @@ public class UserForm implements Serializable {
     @Email
     private String email;
 
-    @NotBlank
+    @Length(min=6, max=255)
     private String password;
 
-    @NotBlank
+    @Length(min=6, max=255)
     private String passwordConfirmation;
 }
