@@ -8,6 +8,7 @@ import org.springframework.test.context.web.WebDelegatingSmartContextLoader
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.util.MultiValueMap
 import org.springframework.web.context.WebApplicationContext
 import spock.lang.Shared
 import spock.lang.Specification
@@ -30,6 +31,11 @@ abstract class AbstractSpecification extends Specification {
 
     def get(String path) {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(path)).andReturn()
+        return new MyMvcResult(mvcResult)
+    }
+
+    def post(String path, MultiValueMap<String, String> params) {
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(path).params(params)).andReturn()
         return new MyMvcResult(mvcResult)
     }
 
