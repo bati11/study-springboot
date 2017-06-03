@@ -6,11 +6,9 @@ import example.model.User;
 import example.repositories.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
@@ -45,6 +43,10 @@ public class UsersController {
 
     @RequestMapping(path = "/users", method = RequestMethod.POST)
     public ModelAndView add(@Validated UserForm form, BindingResult bindingResult) {
+        Optional<FieldError> fieldError = form.validatePasswordAndPasswordConfirmation();
+        if (fieldError.isPresent()) {
+            bindingResult.addError(fieldError.get());
+        }
         if (bindingResult.hasErrors()) {
             return new ModelAndView("users/input");
         }
