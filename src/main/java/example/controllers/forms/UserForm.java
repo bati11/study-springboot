@@ -1,16 +1,16 @@
 package example.controllers.forms;
 
+import example.controllers.forms.validators.EqualsPropertyValues;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.validation.FieldError;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
+@EqualsPropertyValues(property = "password", comparingProperty = "passwordConfirmation")
 public class UserForm implements Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -27,14 +27,4 @@ public class UserForm implements Serializable {
 
     @Length(min=6, max=255)
     private String passwordConfirmation;
-
-    public Optional<FieldError> validatePasswordAndPasswordConfirmation() {
-        if (password != null && !password.equals(passwordConfirmation)) {
-            return Optional.of(
-                    new FieldError("userForm", "password", "password not equal password confirmation.")
-            );
-        } else {
-            return Optional.empty();
-        }
-    }
 }

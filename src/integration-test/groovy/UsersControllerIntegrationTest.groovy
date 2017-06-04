@@ -42,8 +42,8 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
             select('.has-error').size() != 0
             select('.user-name .text-danger').size() == 0
             select('.user-email .text-danger').size() == 0
-            select('.user-password .text-danger').size() == 0
-            select('.user-password-confirmation .text-danger').size() == 1
+            select('.user-password .text-danger').size() == 1
+            select('.user-password-confirmation .text-danger').size() == 0
         }
     }
 }

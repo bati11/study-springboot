@@ -43,10 +43,6 @@ public class UsersController {
 
     @RequestMapping(path = "/users", method = RequestMethod.POST)
     public ModelAndView add(@Validated UserForm form, BindingResult bindingResult) {
-        Optional<FieldError> fieldError = form.validatePasswordAndPasswordConfirmation();
-        if (fieldError.isPresent()) {
-            bindingResult.addError(fieldError.get());
-        }
         if (bindingResult.hasErrors()) {
             return new ModelAndView("users/input");
         }
