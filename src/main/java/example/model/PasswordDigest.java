@@ -2,12 +2,15 @@ package example.model;
 
 import example.MessageDigestUtil;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
 public class PasswordDigest {
+
+    @Getter
     private String value;
 
     private PasswordDigest() {}

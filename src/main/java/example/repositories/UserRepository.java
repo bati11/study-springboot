@@ -1,6 +1,7 @@
 package example.repositories;
 
 import example.jooq.tables.pojos.Users;
+import example.jooq.tables.records.UsersRecord;
 import example.model.PasswordDigest;
 import example.model.User;
 import org.jooq.DSLContext;
@@ -19,6 +20,16 @@ public class UserRepository {
 
     public UserRepository(DSLContext dsl) {
         this.dsl = dsl;
+    }
+
+    public User add(String name, String email, String password) {
+        PasswordDigest passwordDigest = PasswordDigest.create(password);
+        UsersRecord record =
+                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST)
+                    .values(name, email, passwordDigest.getValue())
+                    .returning(USERS.ID)
+                    .fetchOne();
+        return User.from(record.getId(), name, email, passwordDigest);
     }
 
     public Optional<User> findById(int id) {

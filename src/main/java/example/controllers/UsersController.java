@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -42,10 +43,12 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users", method = RequestMethod.POST)
-    public ModelAndView add(@Validated UserForm form, BindingResult bindingResult) {
+    public ModelAndView add(@Validated UserForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return new ModelAndView("users/input");
         }
-        return null;
+        User user = userRepository.add(form.getName(), form.getEmail(), form.getPassword());
+        redirectAttributes.addFlashAttribute("success", "Welcome to the Sample App!");
+        return new ModelAndView("redirect:/users/" + user.getId());
     }
 }

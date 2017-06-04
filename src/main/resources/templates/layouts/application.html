@@ -8,6 +8,7 @@
 <body>
 <div th:replace="layouts/_header"></div>
 <div class="container">
+    <div th:if="${success != null}" class="alert alert-success">[[${success}]]</div>
     <div layout:fragment="content" th:remove="tag"></div>
     <div th:replace="layouts/_footer"></div>
 </div>
