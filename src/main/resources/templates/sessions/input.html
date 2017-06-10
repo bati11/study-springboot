@@ -1,1 +1,30 @@
-login
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/application">
+<head>
+    <title>Log in</title>
+</head>
+<body layout:fragment="content">
+<h1>Log in</h1>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form th:action="@{/login}" th:object="${loginForm}" method="post" >
+            <div class="login-email form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error has-feedback'">
+                <label for="login_email">Email</label>
+                <span th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}">Error</span>
+                <input id="login_email" name="email" type="text" class="form-control" />
+            </div>
+
+            <div class="login-password form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error has-feedback'">
+                <label for="login_password">Password</label>
+                <span th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}">Error</span>
+                <input id="login_password" name="password" type="password" class="form-control" />
+            </div>
+
+            <input class="btn btn-primary" name="commit" type="submit" value="Log in" />
+        </form>
+        <p>New user? <a href="@{/signup}">Sign up now!</a></p>
+    </div>
+</div>
+</body>
+</html>
