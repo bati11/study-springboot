@@ -46,4 +46,19 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
             select('.user-password-confirmation .text-danger').size() == 0
         }
     }
+
+    def "valid signup information"() {
+        setup:
+        HttpHeaders params = new HttpHeaders();
+        params.put("name", ["AAA"])
+        params.put("email", ["aaa@example.com"])
+        params.put("password", ["foofoofoo"])
+        params.put("passwordConfirmation", ["foofoofoo"])
+
+        expect:
+        with(post("/users", params)) {
+            viewName == "users/show"
+            select('.alert-success').size != 0
+        }
+    }
 }
