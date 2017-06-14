@@ -1,11 +1,11 @@
 package example.repositories;
 
+import example.auth.PasswordDigestFactory;
 import example.jooq.tables.pojos.Users;
 import example.jooq.tables.records.UsersRecord;
-import example.model.PasswordDigest;
+import example.auth.PasswordDigest;
 import example.model.User;
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,15 +15,16 @@ import static example.jooq.Tables.*;
 @Repository
 public class UserRepository {
 
-    @Autowired
     private DSLContext dsl;
+    private PasswordDigestFactory passwordDigestFactory;
 
-    public UserRepository(DSLContext dsl) {
+    public UserRepository(DSLContext dsl, PasswordDigestFactory passwordDigestFactory) {
         this.dsl = dsl;
+        this.passwordDigestFactory = passwordDigestFactory;
     }
 
     public User add(String name, String email, String password) {
-        PasswordDigest passwordDigest = PasswordDigest.create(password);
+        PasswordDigest passwordDigest = passwordDigestFactory.create(password);
         UsersRecord record =
                 dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST)
                     .values(name, email, passwordDigest.getValue())
@@ -41,7 +42,7 @@ public class UserRepository {
                     record.getId(),
                     record.getName(),
                     record.getEmail(),
-                    PasswordDigest.fromDigest(record.getPasswordDigest())
+                    passwordDigestFactory.fromDigest(record.getPasswordDigest())
             );
             return Optional.of(user);
         }

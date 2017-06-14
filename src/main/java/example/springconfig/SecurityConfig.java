@@ -1,7 +1,8 @@
 package example.springconfig;
 
-import example.model.MyPasswordEncoder;
-import example.repositories.LoginAccountRepository;
+import example.auth.MyPasswordEncoder;
+import example.auth.LoginAccountRepository;
+import example.auth.PasswordDigestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
+                .regexMatchers("/users$").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
@@ -52,11 +54,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
+    PasswordDigestFactory passwordDigestFactory;
+
+    @Autowired
     LoginAccountRepository loginAccountRepository;
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new MyPasswordEncoder();
+        return new MyPasswordEncoder(passwordDigestFactory);
     }
 
     @Autowired

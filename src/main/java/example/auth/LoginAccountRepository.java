@@ -1,4 +1,4 @@
-package example.repositories;
+package example.auth;
 
 import example.jooq.tables.pojos.Users;
 import example.model.LoginAccount;

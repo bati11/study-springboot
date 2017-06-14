@@ -1,6 +1,7 @@
 package example.model;
 
 
+import example.auth.PasswordDigest;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -25,21 +26,5 @@ public class User {
         result.email = email;
         result.passwordDigest = passwordDigest;
         return result;
-    }
-
-    public static User create(@NonNull String name, @NonNull String email, @NonNull PasswordDigest passwordDigest) {
-        User result = new User();
-        result.name = name;
-        result.email = email;
-        result.passwordDigest = passwordDigest;
-        return result;
-    }
-
-    public boolean authenticate(String rawPassword) {
-        try {
-            return passwordDigest.equals(PasswordDigest.create(rawPassword));
-        } catch (NullPointerException e) {
-            return false;
-        }
     }
 }
