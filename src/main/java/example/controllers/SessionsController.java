@@ -1,9 +1,8 @@
 package example.controllers;
 
+import example.auth.SessionHelper;
 import example.controllers.forms.LoginForm;
 import example.model.LoginAccount;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,13 +31,8 @@ public class SessionsController {
 
     @RequestMapping(value = "/login/success")
     public ModelAndView loginSuccess() throws UserPrincipalNotFoundException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof LoginAccount) {
-            Integer userId = ((LoginAccount) authentication.getPrincipal()).getUserId();
-            return new ModelAndView("redirect:/users/" + userId.toString());
-        } else {
-            throw new UserPrincipalNotFoundException("loginSuccess");
-        }
+        LoginAccount loginAccount = SessionHelper.currentAccount().orElseThrow(() -> new UserPrincipalNotFoundException("loginSuccess"));
+        return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
