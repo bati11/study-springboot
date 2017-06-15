@@ -15,6 +15,12 @@ import java.util.Optional;
 @Controller
 public class SessionsController {
 
+    private SessionHelper sessionHelper;
+
+    public SessionsController(SessionHelper sessionHelper) {
+        this.sessionHelper = sessionHelper;
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView input(LoginForm loginForm, @RequestParam Optional<Boolean> error) {
         ModelAndView modelAndView = new ModelAndView("sessions/input");
@@ -31,7 +37,7 @@ public class SessionsController {
 
     @RequestMapping(value = "/login/success")
     public ModelAndView loginSuccess() throws UserPrincipalNotFoundException {
-        LoginAccount loginAccount = SessionHelper.currentAccount().orElseThrow(() -> new UserPrincipalNotFoundException("loginSuccess"));
+        LoginAccount loginAccount = sessionHelper.currentAccount().orElseThrow(() -> new UserPrincipalNotFoundException("loginSuccess"));
         return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
     }
 
