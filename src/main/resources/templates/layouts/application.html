@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <title layout:title-pattern="$CONTENT_TITLE | $DECORATOR_TITLE">Spring Boot Sample App</title>
+
     <link rel="stylesheet" href="dummy.css" th:href="@{/css/style.css}">
     <meta th:replace="layouts/_shim">
 </head>
@@ -13,5 +14,8 @@
     <div layout:fragment="content" th:remove="tag"></div>
     <div th:replace="layouts/_footer"></div>
 </div>
+<!-- jQuery first, then Tether, then Bootstrap JS. -->
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>

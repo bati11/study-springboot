@@ -17,4 +17,9 @@ public class SessionHelper {
             return Optional.empty();
         }
     }
+
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (authentication != null) && (authentication.getPrincipal() instanceof LoginAccount);
+    }
 }
