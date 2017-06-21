@@ -57,8 +57,7 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
 
         expect:
         with(post("/users", params)) {
-            viewName == "users/show"
-            select('.alert-success').size != 0
+            redirectLocation ==~ /\/users\/\d/
         }
     }
 }

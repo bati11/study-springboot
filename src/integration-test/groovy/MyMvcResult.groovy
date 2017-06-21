@@ -18,6 +18,12 @@ class MyMvcResult {
         return mvcResult.modelAndView.viewName
     }
 
+    def getRedirectLocation() {
+        assert mvcResult != null
+        assert mvcResult.response.status == 302
+        return mvcResult.getResponse().getHeader("location")
+    }
+
     def select(String cssSelector) {
         return doc.select(cssSelector)
     }
