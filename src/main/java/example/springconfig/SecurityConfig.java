@@ -36,7 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/images/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers("/access-denied").permitAll()
                 .anyRequest().authenticated();
+        http.exceptionHandling().accessDeniedPage("/access-denied");
 
         http.formLogin()
                 .loginPage("/login")

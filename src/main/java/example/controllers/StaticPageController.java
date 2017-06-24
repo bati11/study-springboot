@@ -27,4 +27,9 @@ public class StaticPageController {
     public ModelAndView contact() {
         return new ModelAndView("static_pages/contact");
     }
+
+    @RequestMapping("/access-denied")
+    public ModelAndView accessDenied() {
+        return new ModelAndView("static_pages/access-denied");
+    }
 }
