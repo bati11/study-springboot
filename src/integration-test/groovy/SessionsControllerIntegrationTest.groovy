@@ -32,5 +32,17 @@ class SessionsControllerIntegrationTest extends AbstractSpecification {
 
         then:
         result.redirectLocation ==~ /\/users\/\d/
+
+        when:
+        result = redirect(loginAccount, result.redirectLocation)
+
+        then:
+        result.select('.login-user-menu').size() == 1
+
+        when:
+        result = get('/logout')
+
+        then:
+        result.select('.login-user-menu').size() == 0
     }
 }
