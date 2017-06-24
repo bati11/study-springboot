@@ -10,7 +10,7 @@ class UserTest extends Specification {
     User user
 
     def setup() {
-        user = User.create('hoge', 'fuga@example.com', new PasswordDigestFactory().create('password'))
+        user = User.from(1, 'hoge', 'fuga@example.com', new PasswordDigestFactory().create('password'))
     }
 
     def 'users properties'() {
