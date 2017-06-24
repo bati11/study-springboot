@@ -71,6 +71,6 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
         result = redirect(loginAccount, result.redirectLocation)
 
         then:
-        result.select('.dropdown-menu').size() == 1
+        result.select('.login-user-menu').size() == 1
     }
 }
