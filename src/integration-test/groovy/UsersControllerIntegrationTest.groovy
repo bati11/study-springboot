@@ -1,6 +1,11 @@
+import example.auth.LoginAccountRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 
 class UsersControllerIntegrationTest extends AbstractSpecification {
+
+    @Autowired
+    LoginAccountRepository loginAccountRepository
 
     def "should get input"() {
         expect:
@@ -55,9 +60,17 @@ class UsersControllerIntegrationTest extends AbstractSpecification {
         params.put("password", ["foofoofoo"])
         params.put("passwordConfirmation", ["foofoofoo"])
 
-        expect:
-        with(post("/users", params)) {
-            redirectLocation ==~ /\/users\/\d/
-        }
+        when:
+        def result = post("/users", params)
+
+        then:
+        result.redirectLocation ==~ /\/users\/\d/
+
+        when:
+        def loginAccount = loginAccountRepository.loadUserByUsername(params.get("email"))
+        result = redirect(loginAccount, result.redirectLocation)
+
+        then:
+        result.select('.dropdown-menu').size() == 1
     }
 }
