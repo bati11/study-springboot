@@ -1,5 +1,6 @@
 import example.Application
 import example.auth.LoginAccountRepository
+import example.model.LoginAccount
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -59,12 +60,10 @@ abstract class AbstractSpecification extends Specification {
         return result
     }
 
-    def redirectAfterLogin(MyMvcResult mvcResult) {
-        def loginAccount = loginAccountRepository.loadUserByUsername(mvcResult.lastLoginUserEmail)
-        def location = mvcResult.redirectLocation
+    def redirect(LoginAccount loginAccount, String redirectLocation) {
         def result = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .get(location)
+                        .get(redirectLocation)
                         .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
         )
         .andReturn()

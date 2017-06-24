@@ -1,9 +1,13 @@
+import example.auth.LoginAccountRepository
 import example.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 
 class SessionsControllerIntegrationTest extends AbstractSpecification {
     @Autowired
     UserRepository userRepository
+
+    @Autowired
+    LoginAccountRepository loginAccountRepository
 
     def "should get input"() {
         expect:
@@ -23,7 +27,8 @@ class SessionsControllerIntegrationTest extends AbstractSpecification {
         result.redirectLocation ==~ /\/login\/success/
 
         when:
-        result = redirectAfterLogin(result)
+        def loginAccount = loginAccountRepository.loadUserByUsername(user.email)
+        result = redirect(loginAccount, result.redirectLocation)
 
         then:
         result.redirectLocation ==~ /\/users\/\d/
