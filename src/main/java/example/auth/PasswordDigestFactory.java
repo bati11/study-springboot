@@ -1,13 +1,11 @@
 package example.auth;
 
-import example.MessageDigestUtil;
 import lombok.NonNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PasswordDigestFactory {
-
-    private final String salt= "SALT";
 
     public PasswordDigest fromDigest(@NonNull String digest) {
         PasswordDigest result = new PasswordDigest(digest);
@@ -15,7 +13,8 @@ public class PasswordDigestFactory {
     }
 
     public PasswordDigest create(@NonNull String rawPassword) {
-        String value = MessageDigestUtil.sha256(rawPassword + salt);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String value = bCryptPasswordEncoder.encode(rawPassword);
         PasswordDigest result = new PasswordDigest(value);
         return result;
     }
