@@ -26,13 +26,6 @@ class MyMvcResult {
         return mvcResult.getResponse().getHeader("location")
     }
 
-    def getSessionIdCookie() {
-        assert mvcResult.getResponse().getHeaderNames() == "aa"
-        def sessionIdCookie = mvcResult.getResponse().getCookie("JSESSIONID")
-        assert sessionIdCookie != null
-        return sessionIdCookie
-    }
-
     def select(String cssSelector) {
         return doc.select(cssSelector)
     }
