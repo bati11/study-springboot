@@ -2,6 +2,7 @@ package example.springconfig;
 
 import example.auth.LoginAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,11 +13,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${rememberMeCookieSecureOnly:true}")
+    boolean rememberMeCookieSecureOnly;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -38,7 +46,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers("/access-denied").permitAll()
                 .anyRequest().authenticated();
+
         http.exceptionHandling().accessDeniedPage("/access-denied");
+
+        http.rememberMe()
+                .tokenRepository(createTokenRepository())
+                .useSecureCookie(rememberMeCookieSecureOnly);
 
         http.formLogin()
                 .loginPage("/login")
@@ -66,5 +79,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(loginAccountRepository).passwordEncoder(passwordEncoder());
+    }
+
+    @Autowired
+    public DataSource dataSource;
+
+    public PersistentTokenRepository createTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        return tokenRepository;
     }
 }
