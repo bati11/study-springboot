@@ -1,7 +1,9 @@
 package example.auth;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MyPasswordEncoder implements PasswordEncoder {
 
     private PasswordDigestFactory passwordDigestFactory;

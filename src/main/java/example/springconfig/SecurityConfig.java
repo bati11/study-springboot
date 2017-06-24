@@ -2,16 +2,14 @@ package example.springconfig;
 
 import example.auth.MyPasswordEncoder;
 import example.auth.LoginAccountRepository;
-import example.auth.PasswordDigestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -26,16 +24,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/help").permitAll()
-                .antMatchers("/about").permitAll()
-                .antMatchers("/contact").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/signup").permitAll()
-                .antMatchers("/css/**").permitAll()
-                .antMatchers("/images/**").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .regexMatchers("/users$").permitAll()
+                .antMatchers(HttpMethod.GET, "/").permitAll()
+                .antMatchers(HttpMethod.GET, "/help").permitAll()
+                .antMatchers(HttpMethod.GET, "/about").permitAll()
+                .antMatchers(HttpMethod.GET, "/contact").permitAll()
+                .antMatchers(HttpMethod.GET, "/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/signup").permitAll()
+                .antMatchers(HttpMethod.GET, "/css/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/images/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
@@ -54,18 +52,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    PasswordDigestFactory passwordDigestFactory;
+    MyPasswordEncoder myPasswordEncoder;
 
     @Autowired
     LoginAccountRepository loginAccountRepository;
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new MyPasswordEncoder(passwordDigestFactory);
-    }
-
     @Autowired
     public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(loginAccountRepository).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(loginAccountRepository).passwordEncoder(myPasswordEncoder);
     }
 }
