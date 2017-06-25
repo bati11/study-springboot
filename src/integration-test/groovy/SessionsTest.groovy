@@ -29,13 +29,13 @@ class SessionsTest extends AbstractSpecification {
 
         when:
         def loginAccount = loginAccountRepository.loadUserByUsername(user.email)
-        result = redirect(loginAccount, result.redirectLocation)
+        result = redirectAfterLogin(loginAccount, result.redirectLocation)
 
         then:
         result.redirectLocation ==~ /\/users\/\d/
 
         when:
-        result = redirect(loginAccount, result.redirectLocation)
+        result = redirectAfterLogin(loginAccount, result.redirectLocation)
 
         then:
         result.select('.login-user-menu').size() == 1

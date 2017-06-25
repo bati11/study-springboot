@@ -69,7 +69,7 @@ class UsersAddTest extends AbstractSpecification {
 
         when:
         def loginAccount = loginAccountRepository.loadUserByUsername(params.get("email"))
-        result = redirect(loginAccount, result.redirectLocation)
+        result = redirectAfterLogin(loginAccount, result.redirectLocation)
 
         then:
         result.select('.login-user-menu').size() == 1

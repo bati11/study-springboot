@@ -3,6 +3,8 @@ package integrationtestutils
 import example.Application
 import example.auth.LoginAccountRepository
 import example.model.LoginAccount
+import example.model.User
+import example.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,19 +16,32 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.MultiValueMap
 import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = [Application.class])
 @AutoConfigureMockMvc
 @TestPropertySource("/application-integrationtest.properties")
+@Transactional
 abstract class AbstractSpecification extends Specification {
+
+    static String TEST_USER_EMAIL = "test_user@example.com"
+
+    @Autowired
+    private UserRepository userRepository
 
     @Autowired
     private LoginAccountRepository loginAccountRepository
 
     @Autowired
     private MockMvc mockMvc
+
+    User testUser
+
+    def setup() {
+        testUser = userRepository.add("test_user", TEST_USER_EMAIL, "111")
+    }
 
     def get(String path) {
         MvcResult mvcResult = mockMvc.perform(
@@ -43,6 +58,13 @@ abstract class AbstractSpecification extends Specification {
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
         ).andReturn()
         return new MyMvcResult(mvcResult)
+    }
+
+    def redirect(String redirectLocation) {
+        def result = mockMvc.perform(
+                MockMvcRequestBuilders.get(redirectLocation)
+        ).andReturn()
+        return new MyMvcResult(result)
     }
 
     def login(String email, String password) {
@@ -62,13 +84,12 @@ abstract class AbstractSpecification extends Specification {
         return result
     }
 
-    def redirect(LoginAccount loginAccount, String redirectLocation) {
+    def redirectAfterLogin(LoginAccount loginAccount, String redirectLocation) {
         def result = mockMvc.perform(
                 MockMvcRequestBuilders
                         .get(redirectLocation)
                         .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
-        )
-        .andReturn()
+        ).andReturn()
         return new MyMvcResult(result)
     }
 
