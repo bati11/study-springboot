@@ -1,0 +1,17 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/application">
+<head>
+    <title>All users</title>
+</head>
+<body layout:fragment="content">
+<h1>All users</h1>
+
+<ul class="users" th:each="user : ${users}">
+    <li>
+        <p my:gravatar="user=${user},size=50">gravatar</p>
+        <a href="#" th:href="@{'/users/' + ${user.id}}" >[[${user.name}]]</a>
+    </li>
+</ul>
+</body>
+</html>

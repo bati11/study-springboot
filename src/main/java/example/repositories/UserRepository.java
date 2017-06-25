@@ -8,7 +8,9 @@ import example.model.User;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static example.jooq.Tables.*;
 
@@ -60,5 +62,14 @@ public class UserRepository {
                         r.getName(),
                         r.getEmail()
                 ));
+    }
+
+    public List<User> findAll() {
+        return dsl.select().from(USERS).fetch().into(Users.class).stream().map(r ->
+                User.from(
+                        r.getId(),
+                        r.getName(),
+                        r.getEmail()
+                )).collect(Collectors.toList());
     }
 }

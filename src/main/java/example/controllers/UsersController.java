@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -105,5 +106,13 @@ public class UsersController {
 
         redirectAttributes.addFlashAttribute("success", "Profile updated");
         return new ModelAndView(("redirect:/users/" + updatedUser.getId()));
+    }
+
+    @RequestMapping(path = "/users", method = RequestMethod.GET)
+    public ModelAndView index() {
+        List<User> users = userRepository.findAll();
+        ModelAndView modelAndView = new ModelAndView("/users/index");
+        modelAndView.addObject("users", users);
+        return modelAndView;
     }
 }

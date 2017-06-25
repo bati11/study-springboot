@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/users").authenticated()
                 .antMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
                 .antMatchers("/users/{userId}/**").access("@webSecurity.checkUserId(authentication,#userId)")
                 .anyRequest().permitAll();
