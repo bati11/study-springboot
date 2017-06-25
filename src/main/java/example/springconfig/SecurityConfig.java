@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -47,7 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/access-denied").permitAll()
                 .anyRequest().authenticated();
 
-        http.exceptionHandling().accessDeniedPage("/access-denied");
+        http.exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedPage("/access-denied");
 
         http.rememberMe()
                 .tokenRepository(createTokenRepository())
@@ -66,6 +70,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout**"))
                 .logoutSuccessUrl("/login")
                 .permitAll();
+    }
+
+    @Bean
+    AuthenticationEntryPoint authenticationEntryPoint() {
+        return new LoginUrlAuthenticationEntryPoint("/login?unlogin=true");
     }
 
     @Autowired

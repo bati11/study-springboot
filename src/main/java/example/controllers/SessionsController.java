@@ -1,11 +1,8 @@
 package example.controllers;
 
-import example.auth.SessionHelper;
 import example.controllers.forms.LoginForm;
 import example.model.LoginAccount;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,17 +15,13 @@ import java.util.Optional;
 @Controller
 public class SessionsController {
 
-    private SessionHelper sessionHelper;
-
-    public SessionsController(SessionHelper sessionHelper) {
-        this.sessionHelper = sessionHelper;
-    }
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView input(LoginForm loginForm, @RequestParam Optional<Boolean> error) {
+    public ModelAndView input(LoginForm loginForm, @RequestParam Optional<Boolean> error, @RequestParam Optional<Boolean> unlogin) {
         ModelAndView modelAndView = new ModelAndView("sessions/input");
         if (error.orElse(false)) {
             modelAndView.addObject("danger", "Invalid email/password combination");
+        } else if (unlogin.orElse(false)) {
+            modelAndView.addObject("danger", "Please log in.");
         }
         return modelAndView;
     }
@@ -41,7 +34,6 @@ public class SessionsController {
     @RequestMapping(value = "/login/success")
     public ModelAndView loginSuccess(@AuthenticationPrincipal LoginAccount loginAccount) throws UserPrincipalNotFoundException {
         if (loginAccount == null) throw new UserPrincipalNotFoundException("loginSuccess");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
     }
 
