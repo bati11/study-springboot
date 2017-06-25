@@ -30,7 +30,26 @@ public class UserRepository {
                     .values(name, email, passwordDigest.getValue())
                     .returning(USERS.ID)
                     .fetchOne();
-        return User.from(record.getId(), name, email, passwordDigest);
+        return User.from(record.getId(), name, email);
+    }
+
+    public User update(User user, String name, String email, String password) {
+        if (password != null) {
+            PasswordDigest passwordDigest = passwordDigestFactory.create(password);
+            dsl.update(USERS)
+                    .set(USERS.NAME, name)
+                    .set(USERS.EMAIL, email)
+                    .set(USERS.PASSWORD_DIGEST, passwordDigest.getValue())
+                    .where(USERS.ID.eq(user.getId()))
+                    .execute();
+        } else {
+            dsl.update(USERS)
+                    .set(USERS.NAME, name)
+                    .set(USERS.EMAIL, email)
+                    .where(USERS.ID.eq(user.getId()))
+                    .execute();
+        }
+        return User.from(user.getId(), name, email);
     }
 
     public Optional<User> findById(int id) {
@@ -41,8 +60,7 @@ public class UserRepository {
             User user = User.from(
                     record.getId(),
                     record.getName(),
-                    record.getEmail(),
-                    passwordDigestFactory.fromDigest(record.getPasswordDigest())
+                    record.getEmail()
             );
             return Optional.of(user);
         }

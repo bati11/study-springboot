@@ -13,7 +13,7 @@
                         </a>
                         <ul class="login-user-menu dropdown-menu">
                             <li ><a href="#" th:href="@{/users/{userId}(userId=${@sessionHelper.currentAccount().get().getUserId()})}" >Profile</a></li>
-                            <li ><a href="#" >Settings</a></li>
+                            <li ><a href="#" th:href="@{/users/{userId}/edit(userId=${@sessionHelper.currentAccount().get().getUserId()})}">Settings</a></li>
                             <li class="divider"></li>
                             <li ><a href="#" th:href="@{/logout}">Log out</a></li>
                         </ul>

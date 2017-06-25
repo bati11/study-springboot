@@ -2,39 +2,44 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layouts/application">
 <head>
-    <title>Sign up</title>
+    <title>Edit user</title>
 </head>
 <body layout:fragment="content">
-<h1>Sign up</h1>
+<h1>Update your profile</h1>
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
-        <form th:action="@{/users}" th:object="${userInputForm}" class="new_user" id="new_user" method="post" >
+        <form th:action="@{/users/{userId}/update(userId=${user.id})}" th:object="${userEditForm}" class="new_user" id="new_user" method="post" >
             <div class="user-name form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error has-feedback'">
                 <label for="user_name">Name</label>
                 <span class="text-danger" th:errors="*{name}">Error</span>
-                <input id="user_name" name="name" type="text" class="form-control" />
+                <input id="user_name" name="name" th:field="*{name}" type="text" class="form-control" />
             </div>
 
             <div class="user-email form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error has-feedback'">
                 <label for="user_email">Email</label>
                 <span class="text-danger" th:errors="*{email}">Error</span>
-                <input id="user_email" name="email" type="text" class="form-control" />
+                <input id="user_email" name="email" th:field="*{email}" type="text" class="form-control" />
             </div>
 
             <div class="user-password form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error has-feedback'">
                 <label for="user_password">Password</label>
                 <span class="text-danger" th:errors="*{password}">Error</span>
-                <input id="user_password" name="password" type="password" class="form-control" />
+                <input id="user_password" name="password" th:field="*{password}" type="password" class="form-control" />
             </div>
 
             <div class="user-password-confirmation form-group" th:classappend="${#fields.hasErrors('passwordConfirmation')}? 'has-error has-feedback'">
                 <label for="user_password_confirmation">Confirmation</label>
                 <span class="text-danger" th:errors="*{passwordConfirmation}">Error</span>
-                <input id="user_password_confirmation" name="passwordConfirmation" type="password" class="form-control" />
+                <input id="user_password_confirmation" name="passwordConfirmation" th:field="*{passwordConfirmation}" type="password" class="form-control" />
             </div>
 
-            <input class="btn btn-primary" name="commit" type="submit" value="Create my account" />
+            <input class="btn btn-primary" name="commit" type="submit" value="Save changes" />
         </form>
+
+        <div class="gravatar_edit">
+            <p my:gravatar="user=${user},size=80">hoge</p>
+            <a href="http://gravatar.com/emails" target="_blank">change</a>
+        </div>
     </div>
 </div>
 </body>

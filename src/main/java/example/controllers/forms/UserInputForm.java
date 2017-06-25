@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @EqualsPropertyValues(property = "password", comparingProperty = "passwordConfirmation")
-public class UserForm implements Serializable {
+public class UserInputForm implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
@@ -25,9 +26,11 @@ public class UserForm implements Serializable {
     @Email
     private String email;
 
+    @NotNull
     @Size(min=6, max=255)
     private String password;
 
+    @NotNull
     @Size(min=6, max=255)
     private String passwordConfirmation;
 }
