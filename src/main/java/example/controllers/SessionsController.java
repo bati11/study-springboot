@@ -16,7 +16,11 @@ import java.util.Optional;
 public class SessionsController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView input(LoginForm loginForm, @RequestParam Optional<Boolean> error, @RequestParam Optional<Boolean> unlogin) {
+    public ModelAndView input(
+            LoginForm loginForm,
+            @RequestParam Optional<Boolean> error,
+            @RequestParam Optional<Boolean> unlogin
+    ) {
         ModelAndView modelAndView = new ModelAndView("sessions/input");
         if (error.orElse(false)) {
             modelAndView.addObject("danger", "Invalid email/password combination");

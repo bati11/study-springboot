@@ -53,16 +53,12 @@ public class UserRepository {
     }
 
     public Optional<User> findById(int id) {
-        Users record = dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchAny().into(Users.class);
-        if (record == null) {
-            return Optional.empty();
-        } else {
-            User user = User.from(
-                    record.getId(),
-                    record.getName(),
-                    record.getEmail()
-            );
-            return Optional.of(user);
-        }
+        Optional<Users> record = dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchOptionalInto(Users.class);
+        return record.map(r ->
+                User.from(
+                        r.getId(),
+                        r.getName(),
+                        r.getEmail()
+                ));
     }
 }

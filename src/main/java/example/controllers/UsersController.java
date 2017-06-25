@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Controller
@@ -55,7 +54,11 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users", method = RequestMethod.POST)
-    public ModelAndView add(@Validated UserInputForm userInputForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws ServletException {
+    public ModelAndView add(
+            @Validated UserInputForm userInputForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
+    ) throws ServletException {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("users/input");
             modelAndView.addObject("userInputForm", userInputForm);
@@ -71,7 +74,9 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users/{id}/edit", method = RequestMethod.GET)
-    public ModelAndView edit(@PathVariable int id) {
+    public ModelAndView edit(
+            @PathVariable int id
+    ) {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         UserEditForm userEditForm = new UserEditForm();
         userEditForm.setName(user.getName());
@@ -83,7 +88,12 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users/{id}/update", method = RequestMethod.POST)
-    public ModelAndView update(@PathVariable int id, @Validated UserEditForm userEditForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public ModelAndView update(
+            @PathVariable int id,
+            @Validated UserEditForm userEditForm,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
+    ) {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("users/edit");
