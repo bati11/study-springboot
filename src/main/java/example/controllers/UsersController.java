@@ -3,7 +3,7 @@ package example.controllers;
 import example.auth.LoginAccountRepository;
 import example.controllers.exceptions.NotFoundException;
 import example.controllers.forms.UserInputForm;
-import example.controllers.forms.validators.UserEditForm;
+import example.controllers.forms.UserEditForm;
 import example.model.User;
 import example.repositories.UserRepository;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;

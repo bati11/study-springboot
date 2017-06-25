@@ -1,4 +1,4 @@
-package example.controllers.forms.validators;
+package example.controllers.forms;
 
 import example.controllers.forms.validators.EqualsPropertyValues;
 import lombok.Data;

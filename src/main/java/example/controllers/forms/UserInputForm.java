@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -26,11 +25,11 @@ public class UserInputForm implements Serializable {
     @Email
     private String email;
 
-    @NotNull
+    @NotBlank
     @Size(min=6, max=255)
     private String password;
 
-    @NotNull
+    @NotBlank
     @Size(min=6, max=255)
     private String passwordConfirmation;
 }
