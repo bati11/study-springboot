@@ -1,49 +1,52 @@
+import example.model.LoginAccount
 import integrationtestutils.AbstractSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithMockUser
 
 class UserEditTest extends AbstractSpecification {
 
-    @WithMockUser
+    LoginAccount testUserLoginAccount
+    def setup() {
+        testUserLoginAccount = loginAccountRepository.loadUserByUsername(testUser.email)
+    }
+
     def "should get edit"() {
         expect:
-        with(get("/users/${testUser.id}/edit")) {
+        with(get("/users/${testUser.id}/edit", testUserLoginAccount)) {
             viewName == "users/edit"
         }
     }
 
-    @WithMockUser
     def "unsuccessful edit"() {
         setup:
-        HttpHeaders params = new HttpHeaders();
+        HttpHeaders params = new HttpHeaders()
         params.put("name", [""])
         params.put("email", ["invalid email"])
         params.put("password", ["foo"])
         params.put("passwordConfirmation", ["bar"])
 
         expect:
-        with(post("/users/${testUser.id}/update", params)) {
+        with(post("/users/${testUser.id}/update", params, testUserLoginAccount)) {
             viewName == "users/edit"
         }
     }
 
-    @WithMockUser
     def "successful edit"() {
         setup:
-        HttpHeaders params = new HttpHeaders();
+        HttpHeaders params = new HttpHeaders()
         params.put("name", ["Foo Bar"])
         params.put("email", ["foo@bar.com"])
         params.put("password", [""])
         params.put("passwordConfirmation", [""])
 
         when:
-        def result = post("/users/${testUser.id}/update", params)
+        def result = post("/users/${testUser.id}/update", params, testUserLoginAccount)
 
         then:
         result.redirectLocation ==~ /\/users\/${testUser.id}/
 
         when:
-        result = redirect(result.redirectLocation)
+        result = redirect(result.redirectLocation, testUserLoginAccount)
 
         then:
         result.viewName == "users/show"

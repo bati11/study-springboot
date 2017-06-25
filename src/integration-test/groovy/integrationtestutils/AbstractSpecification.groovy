@@ -69,6 +69,16 @@ abstract class AbstractSpecification extends Specification {
         return new MyMvcResult(mvcResult)
     }
 
+    def post(String path, MultiValueMap<String, String> params, LoginAccount loginAccount) {
+        MvcResult mvcResult = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post(path)
+                        .params(params)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
+        ).andReturn()
+        return new MyMvcResult(mvcResult)
+    }
     def redirect(String redirectLocation) {
         def result = mockMvc.perform(
                 MockMvcRequestBuilders.get(redirectLocation)
