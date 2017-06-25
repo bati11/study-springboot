@@ -1,3 +1,5 @@
+import integrationtestutils.AbstractSpecification
+
 class SiteLayoutTest extends AbstractSpecification {
 
     def "layout links"() {

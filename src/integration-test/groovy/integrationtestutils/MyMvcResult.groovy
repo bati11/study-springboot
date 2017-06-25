@@ -1,3 +1,5 @@
+package integrationtestutils
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.springframework.test.web.servlet.MvcResult

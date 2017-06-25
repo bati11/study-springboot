@@ -1,4 +1,6 @@
-class StaticPageControllerIntegrationTest extends AbstractSpecification {
+import integrationtestutils.AbstractSpecification
+
+class StaticPageTest extends AbstractSpecification {
 
     def baseTitle;
 

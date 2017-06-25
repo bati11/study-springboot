@@ -1,8 +1,9 @@
 import example.auth.LoginAccountRepository
 import example.repositories.UserRepository
+import integrationtestutils.AbstractSpecification
 import org.springframework.beans.factory.annotation.Autowired
 
-class SessionsControllerIntegrationTest extends AbstractSpecification {
+class SessionsTest extends AbstractSpecification {
     @Autowired
     UserRepository userRepository
 

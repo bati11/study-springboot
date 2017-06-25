@@ -1,3 +1,5 @@
+package integrationtestutils
+
 import example.Application
 import example.auth.LoginAccountRepository
 import example.model.LoginAccount
