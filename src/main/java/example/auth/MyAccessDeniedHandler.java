@@ -1,5 +1,6 @@
 package example.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.web.WebAttributes;
@@ -20,9 +21,12 @@ public class MyAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
     private SessionHelper sessionHelper;
 
-    public MyAccessDeniedHandler(SessionHelper sessionHelper) {
+    private ForwardingUrl forwardingUrl;
+
+    public MyAccessDeniedHandler(SessionHelper sessionHelper, ForwardingUrl forwardingUrl) {
         super();
         this.sessionHelper = sessionHelper;
+        this.forwardingUrl = forwardingUrl;
         this.setErrorPage(ERROR_PAGE);
     }
 

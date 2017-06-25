@@ -1,7 +1,9 @@
 package example.controllers;
 
+import example.auth.ForwardingUrl;
 import example.controllers.forms.LoginForm;
 import example.model.LoginAccount;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,9 @@ import java.util.Optional;
 
 @Controller
 public class SessionsController {
+
+    @Autowired
+    public ForwardingUrl forwardingUrl;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView input(
@@ -38,7 +43,14 @@ public class SessionsController {
     @RequestMapping(value = "/login/success")
     public ModelAndView loginSuccess(@AuthenticationPrincipal LoginAccount loginAccount) throws UserPrincipalNotFoundException {
         if (loginAccount == null) throw new UserPrincipalNotFoundException("loginSuccess");
-        return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
+
+        if (forwardingUrl != null && forwardingUrl.getUrl() != null) {
+            String url = forwardingUrl.getUrl();
+            forwardingUrl.setUrl(null);
+            return new ModelAndView("redirect:" + url);
+        } else {
+            return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
+        }
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
