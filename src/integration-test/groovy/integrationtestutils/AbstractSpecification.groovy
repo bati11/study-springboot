@@ -29,10 +29,10 @@ abstract class AbstractSpecification extends Specification {
     static String TEST_USER_EMAIL = "test_user@example.com"
 
     @Autowired
-    private UserRepository userRepository
+    UserRepository userRepository
 
     @Autowired
-    private LoginAccountRepository loginAccountRepository
+    LoginAccountRepository loginAccountRepository
 
     @Autowired
     private MockMvc mockMvc
@@ -46,6 +46,15 @@ abstract class AbstractSpecification extends Specification {
     def get(String path) {
         MvcResult mvcResult = mockMvc.perform(
                 MockMvcRequestBuilders.get(path)
+        ).andReturn()
+        return new MyMvcResult(mvcResult)
+    }
+
+    def get(String path, LoginAccount loginAccount) {
+        MvcResult mvcResult = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get(path)
+                        .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
         ).andReturn()
         return new MyMvcResult(mvcResult)
     }
@@ -67,6 +76,15 @@ abstract class AbstractSpecification extends Specification {
         return new MyMvcResult(result)
     }
 
+    def redirect(String redirectLocation, LoginAccount loginAccount) {
+        def result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get(redirectLocation)
+                        .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
+        ).andReturn()
+        return new MyMvcResult(result)
+    }
+
     def login(String email, String password) {
         MvcResult mvcResult = mockMvc.perform(
                 SecurityMockMvcRequestBuilders.formLogin()
@@ -82,15 +100,6 @@ abstract class AbstractSpecification extends Specification {
         result.lastLoginUserEmail = email
         result.lastLoginUserPassword = password
         return result
-    }
-
-    def redirectAfterLogin(LoginAccount loginAccount, String redirectLocation) {
-        def result = mockMvc.perform(
-                MockMvcRequestBuilders
-                        .get(redirectLocation)
-                        .with(SecurityMockMvcRequestPostProcessors.user(loginAccount))
-        ).andReturn()
-        return new MyMvcResult(result)
     }
 
     def view(MyMvcResult myMvcResult) {

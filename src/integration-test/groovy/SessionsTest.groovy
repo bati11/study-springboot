@@ -1,14 +1,6 @@
-import example.auth.LoginAccountRepository
-import example.repositories.UserRepository
 import integrationtestutils.AbstractSpecification
-import org.springframework.beans.factory.annotation.Autowired
 
 class SessionsTest extends AbstractSpecification {
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
-    LoginAccountRepository loginAccountRepository
 
     def "should get input"() {
         expect:
@@ -29,13 +21,13 @@ class SessionsTest extends AbstractSpecification {
 
         when:
         def loginAccount = loginAccountRepository.loadUserByUsername(user.email)
-        result = redirectAfterLogin(loginAccount, result.redirectLocation)
+        result = redirect(result.redirectLocation, loginAccount)
 
         then:
         result.redirectLocation ==~ /\/users\/\d/
 
         when:
-        result = redirectAfterLogin(loginAccount, result.redirectLocation)
+        result = redirect(result.redirectLocation, loginAccount)
 
         then:
         result.select('.login-user-menu').size() == 1

@@ -1,6 +1,7 @@
 package example.springconfig;
 
 import example.auth.LoginAccountRepository;
+import example.auth.MyAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -24,6 +27,9 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    MyAccessDeniedHandler myAccessDeniedHandler;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -43,12 +49,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/images/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers("/users/{userId}/**").access("@webSecurity.checkUserId(authentication,#userId)")
                 .antMatchers("/access-denied").permitAll()
                 .anyRequest().authenticated();
 
         http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedPage("/access-denied");
+                .accessDeniedHandler(myAccessDeniedHandler);
+//                .accessDeniedPage("/access-denied");
 
         http.rememberMe()
                 .tokenRepository(createTokenRepository())
@@ -74,6 +82,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LoginUrlAuthenticationEntryPoint("/login?unlogin=true");
     }
 
+    @Bean
+    example.auth.WebSecurity webSecurity() {
+        return new example.auth.WebSecurity();
+    }
 
     /*
      * Settings for custom UserDetailsService

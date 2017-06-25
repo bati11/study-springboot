@@ -2,9 +2,9 @@ import integrationtestutils.AbstractSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithMockUser
 
-@WithMockUser
 class UserEditTest extends AbstractSpecification {
 
+    @WithMockUser
     def "should get edit"() {
         expect:
         with(get("/users/${testUser.id}/edit")) {
@@ -12,6 +12,7 @@ class UserEditTest extends AbstractSpecification {
         }
     }
 
+    @WithMockUser
     def "unsuccessful edit"() {
         setup:
         HttpHeaders params = new HttpHeaders();
@@ -26,6 +27,7 @@ class UserEditTest extends AbstractSpecification {
         }
     }
 
+    @WithMockUser
     def "successful edit"() {
         setup:
         HttpHeaders params = new HttpHeaders();
@@ -45,5 +47,16 @@ class UserEditTest extends AbstractSpecification {
 
         then:
         result.viewName == "users/show"
+    }
+
+    def "should redirect update when logged in as wrong user"() {
+        setup:
+        def otherUser = userRepository.add("other_user", "other_user@example.com", "222")
+        def loginAccount = loginAccountRepository.loadUserByUsername(otherUser.email)
+
+        expect:
+        with(get("/users/${testUser.id}/edit", loginAccount)) {
+            status == 403
+        }
     }
 }

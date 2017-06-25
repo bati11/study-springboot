@@ -28,6 +28,10 @@ class MyMvcResult {
         return mvcResult.getResponse().getHeader("location")
     }
 
+    def getStatus() {
+        return mvcResult.response.status
+    }
+
     def select(String cssSelector) {
         return doc.select(cssSelector)
     }
