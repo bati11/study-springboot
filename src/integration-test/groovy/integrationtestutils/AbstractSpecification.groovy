@@ -27,6 +27,7 @@ import spock.lang.Specification
 abstract class AbstractSpecification extends Specification {
 
     static String TEST_USER_EMAIL = "test_user@example.com"
+    static String TEST_USER_PASSWORD = "111"
 
     @Autowired
     UserRepository userRepository
@@ -40,7 +41,7 @@ abstract class AbstractSpecification extends Specification {
     User testUser
 
     def setup() {
-        testUser = userRepository.add("test_user", TEST_USER_EMAIL, "111")
+        testUser = userRepository.add("test_user", TEST_USER_EMAIL, TEST_USER_PASSWORD)
     }
 
     def get(String path) {

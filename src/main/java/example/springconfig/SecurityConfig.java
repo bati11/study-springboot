@@ -38,24 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/").permitAll()
-                .antMatchers(HttpMethod.GET, "/help").permitAll()
-                .antMatchers(HttpMethod.GET, "/about").permitAll()
-                .antMatchers(HttpMethod.GET, "/contact").permitAll()
-                .antMatchers(HttpMethod.GET, "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/signup").permitAll()
-                .antMatchers(HttpMethod.GET, "/css/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/images/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
                 .antMatchers("/users/{userId}/**").access("@webSecurity.checkUserId(authentication,#userId)")
-                .antMatchers("/access-denied").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().permitAll();
 
         http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .accessDeniedHandler(myAccessDeniedHandler);
-//                .accessDeniedPage("/access-denied");
 
         http.rememberMe()
                 .tokenRepository(createTokenRepository())
