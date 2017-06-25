@@ -25,9 +25,6 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${rememberMeCookieSecureOnly:true}")
-    boolean rememberMeCookieSecureOnly;
-
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/static/**");
@@ -77,6 +74,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LoginUrlAuthenticationEntryPoint("/login?unlogin=true");
     }
 
+
+    /*
+     * Settings for custom UserDetailsService
+     */
+
     @Autowired
     LoginAccountRepository loginAccountRepository;
 
@@ -89,6 +91,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(loginAccountRepository).passwordEncoder(passwordEncoder());
     }
+
+
+    /*
+     * Settings for Remember Me
+     */
+
+    @Value("${rememberMeCookieSecureOnly:true}")
+    boolean rememberMeCookieSecureOnly;
 
     @Autowired
     public DataSource dataSource;
