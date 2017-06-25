@@ -64,12 +64,19 @@ public class UserRepository {
                 ));
     }
 
-    public List<User> findAll() {
-        return dsl.select().from(USERS).fetch().into(Users.class).stream().map(r ->
-                User.from(
+    public List<User> select(int limit, int offset) {
+        return dsl.select().from(USERS).limit(limit).offset(offset)
+                .fetch()
+                .into(Users.class)
+                .stream()
+                .map(r -> User.from(
                         r.getId(),
                         r.getName(),
-                        r.getEmail()
-                )).collect(Collectors.toList());
+                        r.getEmail()))
+                .collect(Collectors.toList());
+    }
+
+    public Integer count() {
+        return dsl.selectCount().from(USERS).fetchOne(0, Integer.class);
     }
 }

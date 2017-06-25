@@ -7,8 +7,28 @@
 <body layout:fragment="content">
 <h1>All users</h1>
 
-<ul class="users" th:each="user : ${users}">
-    <li>
+<nav>
+    <ul class="pagination">
+        <li th:if="${pager.hasPrevious}">
+            <a aria-label="Previous" href="#" th:href="@{'/users?pageNumber=' + ${pager.currentPage - 1}}">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        <li th:each="page : ${pager.pages}" th:classappend="${page == pager.currentPage}? 'active'">
+            <a href="#" th:href="@{'/users?pageNumber=' + ${page}}">
+                [[${page}]]
+            </a>
+        </li>
+        <li th:if="${pager.hasNext}">
+            <a aria-label="Next" href="#" th:href="@{'/users?pageNumber=' + ${pager.currentPage + 1}}">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<ul class="users">
+    <li th:each="user : ${users}">
         <p my:gravatar="user=${user},size=50">gravatar</p>
         <a href="#" th:href="@{'/users/' + ${user.id}}" >[[${user.name}]]</a>
     </li>

@@ -6,6 +6,7 @@ import example.controllers.forms.UserInputForm;
 import example.controllers.forms.UserEditForm;
 import example.model.User;
 import example.repositories.UserRepository;
+import example.view.Pager;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,10 +111,22 @@ public class UsersController {
     }
 
     @RequestMapping(path = "/users", method = RequestMethod.GET)
-    public ModelAndView index() {
-        List<User> users = userRepository.findAll();
+    public ModelAndView index(@RequestParam Optional<Integer> pageNumber) {
+        int countPerPage = 5;
+        List<User> users = userRepository.select(countPerPage, offset(countPerPage, pageNumber));
+        Integer totalCount = userRepository.count();
+
+        Pager pager = new Pager(pageNumber.orElse(1), totalCount, countPerPage);
+
         ModelAndView modelAndView = new ModelAndView("/users/index");
         modelAndView.addObject("users", users);
+        modelAndView.addObject("pager", pager);
         return modelAndView;
+    }
+
+    private int offset(int countPerPage, Optional<Integer> pageNumber) {
+        int n = pageNumber.orElse(0);
+        n = n < 1 ? 1 : n;
+        return countPerPage * (n - 1);
     }
 }
