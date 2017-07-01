@@ -115,9 +115,10 @@ task generateJooq << {
                 inputSchema('PUBLIC')
             }
             generate([:]) {
-                pojos true
-                daos true
-                immutablePojos true
+                records true
+                pojos false
+                daos false
+                immutablePojos false
             }
             target() {
                 packageName('example.jooq')

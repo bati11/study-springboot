@@ -1,7 +1,6 @@
 package example.repositories;
 
 import example.auth.PasswordDigestFactory;
-import example.jooq.tables.pojos.Users;
 import example.jooq.tables.records.UsersRecord;
 import example.auth.PasswordDigest;
 import example.model.User;
@@ -55,7 +54,7 @@ public class UserRepository {
     }
 
     public Optional<User> findById(int id) {
-        Optional<Users> record = dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchOptionalInto(Users.class);
+        Optional<UsersRecord> record = dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchOptionalInto(UsersRecord.class);
         return record.map(r ->
                 User.from(
                         r.getId(),
@@ -67,7 +66,7 @@ public class UserRepository {
     public List<User> select(int limit, int offset) {
         return dsl.select().from(USERS).limit(limit).offset(offset)
                 .fetch()
-                .into(Users.class)
+                .into(UsersRecord.class)
                 .stream()
                 .map(r -> User.from(
                         r.getId(),

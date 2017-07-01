@@ -1,6 +1,6 @@
 package example.auth;
 
-import example.jooq.tables.pojos.Users;
+import example.jooq.tables.records.UsersRecord;
 import example.model.LoginAccount;
 import org.jooq.DSLContext;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,11 +21,11 @@ public class LoginAccountRepository implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users record = dsl
+        UsersRecord record = dsl
                 .select()
                 .from(USERS)
                 .where(USERS.EMAIL.eq(username))
-                .fetchOptionalInto(Users.class)
+                .fetchOptionalInto(UsersRecord.class)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found."));
         return new LoginAccount(record.getId(), username, record.getPasswordDigest());
     }
