@@ -28,10 +28,9 @@
 </nav>
 
 <ul class="users">
-    <li th:each="user : ${users}">
-        <p my:gravatar="user=${user},size=50">gravatar</p>
-        <a href="#" th:href="@{'/users/' + ${user.id}}" >[[${user.name}]]</a>
-    </li>
+    <div th:each="user : ${users}" th:remove="tag">
+        <div th:replace="users/_user" th:with="${user}" />
+    </div>
 </ul>
 </body>
 </html>
