@@ -60,6 +60,15 @@ abstract class AbstractSpecification extends Specification {
         return new MyMvcResult(mvcResult)
     }
 
+    def post(String path) {
+        MvcResult mvcResult = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post(path)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+        ).andReturn()
+        return new MyMvcResult(mvcResult)
+    }
+
     def post(String path, MultiValueMap<String, String> params) {
         MvcResult mvcResult = mockMvc.perform(
                 MockMvcRequestBuilders

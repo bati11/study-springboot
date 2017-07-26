@@ -1,4 +1,7 @@
 <li>
     <p my:gravatar="user=${user},size=50">gravatar</p>
     <a href="#" th:href="@{'/users/' + ${user.id}}" >[[${user.name}]]</a>
+    <div th:if="${@sessionHelper.isAdmin()}" th:remove="tag">
+        <a href="#">delete</a>
+    </div>
 </li>

@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/users").authenticated()
                 .antMatchers(HttpMethod.GET, "/users/{userId}").permitAll()
+                .antMatchers("/users/{userId}/destroy").access("isAuthenticated() and hasAuthority('ADMIN')")
                 .antMatchers("/users/{userId}/**").access("@webSecurity.checkUserId(authentication,#userId)")
                 .anyRequest().permitAll();
 

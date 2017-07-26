@@ -2,8 +2,10 @@ package example.auth;
 
 import example.model.LoginAccount;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Optional;
 
@@ -15,6 +17,20 @@ public class SessionHelper {
             return Optional.of((LoginAccount) authentication.getPrincipal());
         } else {
             return Optional.empty();
+        }
+    }
+
+    public boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication != null) && (authentication.getPrincipal() instanceof LoginAccount)) {
+            LoginAccount loginAccount = (LoginAccount) authentication.getPrincipal();
+            if (CollectionUtils.isEmpty(loginAccount.getAuthorities())) {
+                return false;
+            } else {
+                return loginAccount.getAuthorities().stream().anyMatch((x) -> x.getAuthority().equals("ADMIN"));
+            }
+        } else {
+            return false;
         }
     }
 

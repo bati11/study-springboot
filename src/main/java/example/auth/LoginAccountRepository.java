@@ -27,7 +27,7 @@ public class LoginAccountRepository implements UserDetailsService {
                 .where(USERS.EMAIL.eq(username))
                 .fetchOptionalInto(UsersRecord.class)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found."));
-        return new LoginAccount(record.getId(), username, record.getPasswordDigest());
+        return new LoginAccount(record.getId(), username, record.getPasswordDigest(), record.getIsAdmin());
     }
 
 }

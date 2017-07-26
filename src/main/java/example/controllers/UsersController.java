@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
+import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -122,6 +123,18 @@ public class UsersController {
         modelAndView.addObject("users", users);
         modelAndView.addObject("pager", pager);
         return modelAndView;
+    }
+
+    @RequestMapping(path = "/users/{id}/destroy", method = RequestMethod.POST)
+    public ModelAndView destroy(
+            @PathVariable int id,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        userRepository.remove(user);
+
+        redirectAttributes.addFlashAttribute("success", "User deleted");
+        return new ModelAndView(("redirect:/users/"));
     }
 
     private int offset(int countPerPage, Optional<Integer> pageNumber) {

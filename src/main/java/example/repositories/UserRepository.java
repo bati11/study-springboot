@@ -78,4 +78,8 @@ public class UserRepository {
     public Integer count() {
         return dsl.selectCount().from(USERS).fetchOne(0, Integer.class);
     }
+
+    public void remove(User user) {
+        dsl.deleteFrom(USERS).where(USERS.ID.eq(user.getId())).execute();
+    }
 }
