@@ -97,6 +97,10 @@ idea {
     }
 }
 
+bootRun {
+    addResources = true
+}
+
 task generateJooq << {
     def writer = new StringWriter()
     def xml = new groovy.xml.MarkupBuilder(writer)
