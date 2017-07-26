@@ -34,6 +34,16 @@ public class SessionHelper {
         }
     }
 
+    public boolean isLoginUser(Integer userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ((authentication != null) && (authentication.getPrincipal() instanceof LoginAccount)) {
+            LoginAccount loginAccount = (LoginAccount) authentication.getPrincipal();
+            return loginAccount.getUserId().equals(userId);
+        } else {
+            return false;
+        }
+    }
+
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (authentication != null) && (authentication.getPrincipal() instanceof LoginAccount);

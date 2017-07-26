@@ -27,9 +27,23 @@
     </ul>
 </nav>
 
+<script>
+function deleteWithConfirm(userId) {
+    if (confirm('You sure?')) {
+        document.getElementById('deleteForm' + userId).submit();
+    }
+}
+</script>
 <ul class="users">
     <div th:each="user : ${users}" th:remove="tag">
-        <div th:replace="users/_user" th:with="${user}" />
+        <li>
+            <p my:gravatar="user=${user},size=50">gravatar</p>
+            <a href="#" th:href="@{'/users/' + ${user.id}}" >[[${user.name}]]</a>
+            <div th:if="${@sessionHelper.isAdmin() && !@sessionHelper.isLoginUser(user.id)}" th:remove="tag">
+                <a href="#" th:onclick="'deleteWithConfirm(' + ${user.id} + ');return false;'">delete</a>
+            </div>
+            <form th:action="@{'/users/' + ${user.id} + '/destroy'}" th:id="'deleteForm' + ${user.id}" method="post"></form>
+        </li>
     </div>
 </ul>
 </body>
