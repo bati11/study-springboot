@@ -63,6 +63,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile('org.springframework.boot:spring-boot-starter-jooq')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-mail')
     compile('com.h2database:h2:1.4.195')
     compile('org.projectlombok:lombok:1.16.16')
     compile "org.flywaydb:flyway-core:4.2.0"

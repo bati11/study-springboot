@@ -2,8 +2,9 @@ package example.controllers;
 
 import example.auth.LoginAccountRepository;
 import example.controllers.exceptions.NotFoundException;
-import example.controllers.forms.UserInputForm;
 import example.controllers.forms.UserEditForm;
+import example.controllers.forms.UserInputForm;
+import example.mail.MyMailSender;
 import example.model.User;
 import example.repositories.UserRepository;
 import example.view.Pager;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletException;
-import javax.websocket.server.PathParam;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +31,12 @@ public class UsersController {
 
     private UserRepository userRepository;
     private LoginAccountRepository loginAccountRepository;
+    private MyMailSender myMailSender;
 
-    public UsersController(UserRepository userRepository, LoginAccountRepository loginAccountRepository) {
+    public UsersController(UserRepository userRepository, LoginAccountRepository loginAccountRepository, MyMailSender myMailSender) {
         this.userRepository = userRepository;
         this.loginAccountRepository = loginAccountRepository;
+        this.myMailSender = myMailSender;
     }
 
     @InitBinder
@@ -42,9 +45,12 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    public ModelAndView input() {
+    public ModelAndView input() throws MessagingException, IOException {
         ModelAndView modelAndView = new ModelAndView("users/input");
         modelAndView.addObject("userInputForm", new UserInputForm());
+
+        myMailSender.send("aaa@example.com", "Subject Desuyone!!", "Text Desuyo!!");
+
         return modelAndView;
     }
 
