@@ -64,6 +64,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-jooq')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-mail')
+    compile('commons-codec:commons-codec:1.10')
     compile('com.h2database:h2:1.4.195')
     compile('org.projectlombok:lombok:1.16.16')
     compile "org.flywaydb:flyway-core:4.2.0"
@@ -93,7 +94,7 @@ idea {
         languageLevel = jdkVersion
     }
     module {
-        inheritOutputDirs = false
+        inheritOutputDirs = true
         scopes.TEST.plus += [ configurations.integrationTestCompile]
     }
 }

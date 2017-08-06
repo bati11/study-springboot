@@ -1,4 +1,4 @@
-package example.auth;
+package example.util;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -6,12 +6,12 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class PasswordDigest {
+public class Digest {
 
     @Getter
     private String value;
 
-    PasswordDigest(String value) {
+    Digest(String value) {
         this.value = value;
     }
 }

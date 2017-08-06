@@ -65,11 +65,11 @@ class UsersAddTest extends AbstractSpecification {
         def result = post("/users", params)
 
         then:
-        result.redirectLocation ==~ /\/users\/\d/
+        result.redirectLocation ==~ /\/users\/\d+/
 
         when:
         def loginAccount = loginAccountRepository.loadUserByUsername(params.get("email"))
-        result = redirectAfterLogin(loginAccount, result.redirectLocation)
+        result = redirect(result.redirectLocation, loginAccount)
 
         then:
         result.select('.login-user-menu').size() == 1

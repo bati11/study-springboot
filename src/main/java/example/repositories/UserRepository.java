@@ -1,8 +1,8 @@
 package example.repositories;
 
-import example.auth.PasswordDigestFactory;
+import example.util.DigestFactory;
 import example.jooq.tables.records.UsersRecord;
-import example.auth.PasswordDigest;
+import example.util.Digest;
 import example.model.User;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -17,30 +17,30 @@ import static example.jooq.Tables.*;
 public class UserRepository {
 
     private DSLContext dsl;
-    private PasswordDigestFactory passwordDigestFactory;
 
-    public UserRepository(DSLContext dsl, PasswordDigestFactory passwordDigestFactory) {
+    public UserRepository(DSLContext dsl) {
         this.dsl = dsl;
-        this.passwordDigestFactory = passwordDigestFactory;
     }
 
-    public User add(String name, String email, String password) {
-        PasswordDigest passwordDigest = passwordDigestFactory.create(password);
+    public User add(User user) {
+        if (user.getId() != null) {
+            throw new IllegalArgumentException("user is already exists.");
+        }
         UsersRecord record =
-                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST)
-                    .values(name, email, passwordDigest.getValue())
+                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_DIGEST)
+                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationDigest().getValue())
                     .returning(USERS.ID)
                     .fetchOne();
-        return User.from(record.getId(), name, email);
+        return User.from(record.getId(), user.getName(), user.getEmail());
     }
 
     public User update(User user, String name, String email, String password) {
         if (password != null) {
-            PasswordDigest passwordDigest = passwordDigestFactory.create(password);
+            Digest digest = DigestFactory.create(password);
             dsl.update(USERS)
                     .set(USERS.NAME, name)
                     .set(USERS.EMAIL, email)
-                    .set(USERS.PASSWORD_DIGEST, passwordDigest.getValue())
+                    .set(USERS.PASSWORD_DIGEST, digest.getValue())
                     .where(USERS.ID.eq(user.getId()))
                     .execute();
         } else {

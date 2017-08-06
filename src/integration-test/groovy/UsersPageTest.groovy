@@ -12,7 +12,7 @@ class UsersPageTest extends AbstractSpecification {
     }
 
     def "should redirect destroy when not logged in"() {
-        def addedUser = userRepository.add("hogehoge", "hoge@example.com", "123456")
+        def addedUser = userRepository.add(User.create("hogehoge", "hoge@example.com", "123456"))
         expect:
         with(post("/users/${addedUser.id}/destroy")) {
             status == 302
@@ -22,7 +22,7 @@ class UsersPageTest extends AbstractSpecification {
 
     @WithMockUser(authorities = "USER")
     def "should redirect destroy when logged in as a non-admin"() {
-        def addedUser = userRepository.add("hogehoge", "hoge@example.com", "123456")
+        def addedUser = userRepository.add(User.create("hogehoge", "hoge@example.com", "123456"))
         expect:
         with(post("/users/${addedUser.id}/destroy")) {
             status == 403

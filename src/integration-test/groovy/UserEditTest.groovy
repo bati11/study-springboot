@@ -1,4 +1,5 @@
 import example.model.LoginAccount
+import example.model.User
 import integrationtestutils.AbstractSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithMockUser
@@ -54,7 +55,7 @@ class UserEditTest extends AbstractSpecification {
 
     def "should redirect update when logged in as wrong user"() {
         setup:
-        def otherUser = userRepository.add("other_user", "other_user@example.com", "222")
+        def otherUser = userRepository.add(User.create("other_user", "other_user@example.com", "222"))
         def loginAccount = loginAccountRepository.loadUserByUsername(otherUser.email)
 
         expect:

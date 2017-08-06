@@ -74,7 +74,7 @@ public class UsersController {
             modelAndView.addObject("userInputForm", userInputForm);
             return modelAndView;
         }
-        User user = userRepository.add(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword());
+        User user = userRepository.add(User.create(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword()));
 
         UserDetails loginAccount = loginAccountRepository.loadUserByUsername(userInputForm.getEmail());
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(loginAccount, userInputForm.getPassword()));

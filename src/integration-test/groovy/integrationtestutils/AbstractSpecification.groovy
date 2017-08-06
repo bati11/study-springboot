@@ -41,7 +41,7 @@ abstract class AbstractSpecification extends Specification {
     User testUser
 
     def setup() {
-        testUser = userRepository.add("test_user", TEST_USER_EMAIL, TEST_USER_PASSWORD)
+        testUser = userRepository.add(User.create("test_user", TEST_USER_EMAIL, TEST_USER_PASSWORD))
     }
 
     def get(String path) {

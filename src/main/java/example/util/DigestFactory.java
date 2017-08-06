@@ -1,21 +1,20 @@
-package example.auth;
+package example.util;
 
 import lombok.NonNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component
-public class PasswordDigestFactory {
+public class DigestFactory {
 
-    public PasswordDigest fromDigest(@NonNull String digest) {
-        PasswordDigest result = new PasswordDigest(digest);
+    public static Digest fromDigest(@NonNull String digest) {
+        Digest result = new Digest(digest);
         return result;
     }
 
-    public PasswordDigest create(@NonNull String rawPassword) {
+    public static Digest create(@NonNull String rawPassword) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String value = bCryptPasswordEncoder.encode(rawPassword);
-        PasswordDigest result = new PasswordDigest(value);
+        Digest result = new Digest(value);
         return result;
     }
 }
