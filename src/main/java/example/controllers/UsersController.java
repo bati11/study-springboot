@@ -4,9 +4,10 @@ import example.auth.LoginAccountRepository;
 import example.controllers.exceptions.NotFoundException;
 import example.controllers.forms.UserEditForm;
 import example.controllers.forms.UserInputForm;
-import example.mail.MyMailSender;
+import example.model.AccountActivationMail;
 import example.model.User;
 import example.repositories.UserRepository;
+import example.service.AccountActivationMailSender;
 import example.view.Pager;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,10 +20,14 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,12 +36,15 @@ public class UsersController {
 
     private UserRepository userRepository;
     private LoginAccountRepository loginAccountRepository;
-    private MyMailSender myMailSender;
+    private AccountActivationMailSender accountActivationMailSender;
 
-    public UsersController(UserRepository userRepository, LoginAccountRepository loginAccountRepository, MyMailSender myMailSender) {
+    public UsersController(
+            UserRepository userRepository,
+            LoginAccountRepository loginAccountRepository,
+            AccountActivationMailSender accountActivationMailSender) {
         this.userRepository = userRepository;
         this.loginAccountRepository = loginAccountRepository;
-        this.myMailSender = myMailSender;
+        this.accountActivationMailSender = accountActivationMailSender;
     }
 
     @InitBinder
@@ -48,8 +56,6 @@ public class UsersController {
     public ModelAndView input() throws MessagingException, IOException {
         ModelAndView modelAndView = new ModelAndView("users/input");
         modelAndView.addObject("userInputForm", new UserInputForm());
-
-        myMailSender.send("aaa@example.com", "Subject Desuyone!!", "Text Desuyo!!");
 
         return modelAndView;
     }
@@ -67,7 +73,8 @@ public class UsersController {
     public ModelAndView add(
             @Validated UserInputForm userInputForm,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            UriComponentsBuilder uriComponentsBuilder
     ) throws ServletException {
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("users/input");
@@ -78,6 +85,17 @@ public class UsersController {
 
         UserDetails loginAccount = loginAccountRepository.loadUserByUsername(userInputForm.getEmail());
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(loginAccount, userInputForm.getPassword()));
+
+        try {
+            String uri = uriComponentsBuilder
+                    .pathSegment("account_activation", user.getActivationToken(), "edit")
+                    .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
+                    .toUriString();
+            AccountActivationMail mail = new AccountActivationMail(user, uri);
+            accountActivationMailSender.exec(mail);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         redirectAttributes.addFlashAttribute("success", "Welcome to the Sample App!");
         return new ModelAndView("redirect:/users/" + user.getId());
