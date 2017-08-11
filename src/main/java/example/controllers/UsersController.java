@@ -82,10 +82,6 @@ public class UsersController {
             return modelAndView;
         }
         User user = userRepository.add(User.create(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword()));
-
-        UserDetails loginAccount = loginAccountRepository.loadUserByUsername(userInputForm.getEmail());
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(loginAccount, userInputForm.getPassword()));
-
         try {
             String uri = uriComponentsBuilder
                     .pathSegment("account_activation", user.getActivationToken(), "edit")
@@ -97,8 +93,8 @@ public class UsersController {
             throw new RuntimeException(e);
         }
 
-        redirectAttributes.addFlashAttribute("success", "Welcome to the Sample App!");
-        return new ModelAndView("redirect:/users/" + user.getId());
+        redirectAttributes.addFlashAttribute("success", "Please check your email to activate your account.");
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(path = "/users/{id}/edit", method = RequestMethod.GET)

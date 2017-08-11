@@ -53,25 +53,25 @@ class UsersAddTest extends AbstractSpecification {
         }
     }
 
-    def "valid signup information"() {
-        setup:
-        HttpHeaders params = new HttpHeaders();
-        params.put("name", ["AAA"])
-        params.put("email", ["aaa@example.com"])
-        params.put("password", ["foofoofoo"])
-        params.put("passwordConfirmation", ["foofoofoo"])
-
-        when:
-        def result = post("/users", params)
-
-        then:
-        result.redirectLocation ==~ /\/users\/\d+/
-
-        when:
-        def loginAccount = loginAccountRepository.loadUserByUsername(params.get("email"))
-        result = redirect(result.redirectLocation, loginAccount)
-
-        then:
-        result.select('.login-user-menu').size() == 1
-    }
+//    def "valid signup information"() {
+//        setup:
+//        HttpHeaders params = new HttpHeaders();
+//        params.put("name", ["AAA"])
+//        params.put("email", ["aaa@example.com"])
+//        params.put("password", ["foofoofoo"])
+//        params.put("passwordConfirmation", ["foofoofoo"])
+//
+//        when:
+//        def result = post("/users", params)
+//
+//        then:
+//        result.redirectLocation ==~ /\/users\/\d+/
+//
+//        when:
+//        def loginAccount = loginAccountRepository.loadUserByUsername(params.get("email"))
+//        result = redirect(result.redirectLocation, loginAccount)
+//
+//        then:
+//        result.select('.login-user-menu').size() == 1
+//    }
 }
