@@ -9,23 +9,26 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.mail.internet.MimeMessage;
+
 @Service
-public class AccountActivationMailSender {
-    private final MyMailSender myMailSender;
+public class SendAccountActivationMailService {
+    private MyMailSender myMailSender;
 
     @Autowired
     @Qualifier("emailTemplateEngine")
     private TemplateEngine mailTemplateEngine;
 
-    public AccountActivationMailSender(MyMailSender myMailSender) {
+    public SendAccountActivationMailService(MyMailSender myMailSender) {
         this.myMailSender = myMailSender;
     }
 
-    public void exec(AccountActivationMail mail) {
+    public void execute(AccountActivationMail mail) {
         Context ctx = new Context();
         ctx.setVariables(mail.getParams());
         String mailContent = mailTemplateEngine.process(mail.getContentTemplate(), ctx);
 
-        myMailSender.send(new MailParam(mail.getFrom(), mail.getTo(), mail.getSubject(), mailContent));
+        MimeMessage mimeMessage = myMailSender.createMimeMessage(new MailParam(mail.getFrom(), mail.getTo(), mail.getSubject(), mailContent));
+        myMailSender.send(mimeMessage);
     }
 }

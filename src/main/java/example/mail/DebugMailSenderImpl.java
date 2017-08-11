@@ -19,42 +19,31 @@ public class DebugMailSenderImpl extends AbstractMyMailSender {
     }
 
     @Override
-    public void send(MailParam mailParam) {
+    public MimeMessage createMimeMessage(MailParam mailParam) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
             setMessageInfo(messageHelper, mailParam);
+            return message;
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-            MimeMessage mimeMessage = messageHelper.getMimeMessage();
+    @Override
+    public void send(MimeMessage mimeMessage) {
+        try {
             System.out.println("==========");
             System.out.println("FROM: " + Arrays.toString(mimeMessage.getFrom()));
             System.out.println("TO: " + Arrays.toString(mimeMessage.getRecipients(Message.RecipientType.TO)));
             System.out.println("SUBJECT: " + mimeMessage.getSubject());
             System.out.println();
-            MimeMultipart mmp = (MimeMultipart) mimeMessage.getContent();
-            for (int i = 0; i < mmp.getCount(); i++) {
-                System.out.println(getText(mmp.getBodyPart(i)));
-            }
+            String mailContent = getMailContent(mimeMessage);
+            System.out.println(mailContent);
 
             System.out.println("==========");
-        } catch (MessagingException | IOException e) {
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private String getText(Part part) throws MessagingException, IOException {
-        if (part.isMimeType("text/*")) {
-            return StreamUtils.copyToString(part.getInputStream(), StandardCharsets.UTF_8);
-        } else if (part.isMimeType("multipart/*")) {
-            Multipart multipart = (Multipart)part.getContent();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < multipart.getCount(); i++) {
-                Part bodyPart = multipart.getBodyPart(i);
-                sb.append(getText(bodyPart));
-                sb.append("\n");
-            }
-            return sb.toString();
-        }
-        return null;
     }
 }

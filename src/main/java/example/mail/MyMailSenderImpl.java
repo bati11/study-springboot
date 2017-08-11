@@ -14,12 +14,16 @@ public class MyMailSenderImpl extends AbstractMyMailSender {
     }
 
     @Override
-    public void send(MailParam mailParam) {
+    public MimeMessage createMimeMessage(MailParam mailParam) {
         try {
-            MimeMessage message = createMessage(javaMailSender, mailParam);
-            javaMailSender.send(message);
+            return createMessage(javaMailSender, mailParam);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void send(MimeMessage mimeMessage) {
+        javaMailSender.send(mimeMessage);
     }
 }

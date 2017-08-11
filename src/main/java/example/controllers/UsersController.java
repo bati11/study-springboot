@@ -7,7 +7,7 @@ import example.controllers.forms.UserInputForm;
 import example.model.AccountActivationMail;
 import example.model.User;
 import example.repositories.UserRepository;
-import example.service.AccountActivationMailSender;
+import example.service.SendAccountActivationMailService;
 import example.view.Pager;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,15 +36,15 @@ public class UsersController {
 
     private UserRepository userRepository;
     private LoginAccountRepository loginAccountRepository;
-    private AccountActivationMailSender accountActivationMailSender;
+    private SendAccountActivationMailService sendAccountActivationMailService;
 
     public UsersController(
             UserRepository userRepository,
             LoginAccountRepository loginAccountRepository,
-            AccountActivationMailSender accountActivationMailSender) {
+            SendAccountActivationMailService sendAccountActivationMailService) {
         this.userRepository = userRepository;
         this.loginAccountRepository = loginAccountRepository;
-        this.accountActivationMailSender = accountActivationMailSender;
+        this.sendAccountActivationMailService = sendAccountActivationMailService;
     }
 
     @InitBinder
@@ -92,7 +92,7 @@ public class UsersController {
                     .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
                     .toUriString();
             AccountActivationMail mail = new AccountActivationMail(user, uri);
-            accountActivationMailSender.exec(mail);
+            sendAccountActivationMailService.execute(mail);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
