@@ -16,19 +16,21 @@ public class User {
     private String name;
     private String email;
     private Digest passwordDigest;
-    private Digest activationDigest;
+    private String activationToken;
 
     private User () {}
 
     public static User from(
             @NonNull Integer id,
             @NonNull String name,
-            @NonNull String email
+            @NonNull String email,
+            @NonNull String activationToken
     ) {
         User result = new User();
         result.id = id;
         result.name = name;
         result.email = email;
+        result.activationToken = activationToken;
         return result;
     }
 
@@ -38,13 +40,13 @@ public class User {
             @NonNull String rawPassword
     ) {
         Digest passwordDigest = DigestFactory.create(rawPassword);
-        Digest activationDigest = DigestFactory.create(newToken());
+        String activationToken = newToken();
 
         User result = new User();
         result.name = name;
         result.email = email.toLowerCase();
         result.passwordDigest = passwordDigest;
-        result.activationDigest = activationDigest;
+        result.activationToken = activationToken;
         return result;
     }
 

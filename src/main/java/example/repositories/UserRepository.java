@@ -27,11 +27,11 @@ public class UserRepository {
             throw new IllegalArgumentException("user is already exists.");
         }
         UsersRecord record =
-                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_DIGEST)
-                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationDigest().getValue())
+                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_TOKEN)
+                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationToken())
                     .returning(USERS.ID)
                     .fetchOne();
-        return User.from(record.getId(), user.getName(), user.getEmail());
+        return User.from(record.getId(), user.getName(), user.getEmail(), user.getActivationToken());
     }
 
     public User update(User user, String name, String email, String password) {
@@ -50,7 +50,7 @@ public class UserRepository {
                     .where(USERS.ID.eq(user.getId()))
                     .execute();
         }
-        return User.from(user.getId(), name, email);
+        return User.from(user.getId(), name, email, user.getActivationToken());
     }
 
     public Optional<User> findById(int id) {
@@ -59,7 +59,8 @@ public class UserRepository {
                 User.from(
                         r.getId(),
                         r.getName(),
-                        r.getEmail()
+                        r.getEmail(),
+                        r.getActivationToken()
                 ));
     }
 
@@ -71,7 +72,8 @@ public class UserRepository {
                 .map(r -> User.from(
                         r.getId(),
                         r.getName(),
-                        r.getEmail()))
+                        r.getEmail(),
+                        r.getActivationToken()))
                 .collect(Collectors.toList());
     }
 
