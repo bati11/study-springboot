@@ -8,19 +8,19 @@ import javax.mail.internet.MimeMessage;
 
 public abstract class AbstractMyMailSender implements MyMailSender {
 
-    protected MimeMessage createMessage(JavaMailSender javaMailSender, String to, String subject, String text) throws MessagingException {
+    protected MimeMessage createMessage(JavaMailSender javaMailSender, MailParam mailParam) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
 
-        setMessageInfo(messageHelper, to, subject, text);
+        setMessageInfo(messageHelper, mailParam);
 
         return message;
     }
 
-    protected void setMessageInfo(MimeMessageHelper messageHelper, String to, String subject, String text) throws MessagingException {
-        messageHelper.setFrom("info@example.com");
-        messageHelper.setTo(to);
-        messageHelper.setSubject(subject);
-        messageHelper.setText(text);
+    protected void setMessageInfo(MimeMessageHelper messageHelper, MailParam mailParam) throws MessagingException {
+        messageHelper.setFrom(mailParam.getFrom());
+        messageHelper.setTo(mailParam.getTo());
+        messageHelper.setSubject(mailParam.getSubject());
+        messageHelper.setText(mailParam.getMailContent());
     }
 }

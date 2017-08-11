@@ -19,18 +19,18 @@ public class DebugMailSenderImpl extends AbstractMyMailSender {
     }
 
     @Override
-    public void send(String to, String subject, String text) {
+    public void send(MailParam mailParam) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-            setMessageInfo(messageHelper, to, subject, text);
+            setMessageInfo(messageHelper, mailParam);
 
-            System.out.println("==========");
-            System.out.println("FROM: " + Arrays.toString(messageHelper.getMimeMessage().getFrom()));
-            System.out.println("TO: " + Arrays.toString(messageHelper.getMimeMessage().getRecipients(Message.RecipientType.TO)));
-            System.out.println("SUBJECT: " + messageHelper.getMimeMessage().getSubject());
-            System.out.println();
             MimeMessage mimeMessage = messageHelper.getMimeMessage();
+            System.out.println("==========");
+            System.out.println("FROM: " + Arrays.toString(mimeMessage.getFrom()));
+            System.out.println("TO: " + Arrays.toString(mimeMessage.getRecipients(Message.RecipientType.TO)));
+            System.out.println("SUBJECT: " + mimeMessage.getSubject());
+            System.out.println();
             MimeMultipart mmp = (MimeMultipart) mimeMessage.getContent();
             for (int i = 0; i < mmp.getCount(); i++) {
                 System.out.println(getText(mmp.getBodyPart(i)));

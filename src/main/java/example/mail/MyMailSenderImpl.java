@@ -14,9 +14,9 @@ public class MyMailSenderImpl extends AbstractMyMailSender {
     }
 
     @Override
-    public void send(String to, String subject, String text) {
+    public void send(MailParam mailParam) {
         try {
-            MimeMessage message = createMessage(javaMailSender, to, subject, text);
+            MimeMessage message = createMessage(javaMailSender, mailParam);
             javaMailSender.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
