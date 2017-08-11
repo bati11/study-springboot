@@ -1,9 +1,11 @@
 package example.auth;
 
 import example.model.LoginAccount;
+import example.model.User;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -11,6 +13,12 @@ import java.util.Optional;
 
 @Component
 public class SessionHelper {
+    private LoginAccountRepository loginAccountRepository;
+
+    public SessionHelper(LoginAccountRepository loginAccountRepository) {
+        this.loginAccountRepository = loginAccountRepository;
+    }
+
     public Optional<LoginAccount> currentAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if ((authentication != null) && (authentication.getPrincipal() instanceof LoginAccount)) {
@@ -47,5 +55,13 @@ public class SessionHelper {
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (authentication != null) && (authentication.getPrincipal() instanceof LoginAccount);
+    }
+
+    public void login(User user) {
+        UserDetails loginAccount = loginAccountRepository.loadUserByUsername(user.getEmail());
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginAccount, "", loginAccount.getAuthorities());
+        authenticationToken.eraseCredentials();
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 }

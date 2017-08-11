@@ -81,10 +81,11 @@ public class UsersController {
             modelAndView.addObject("userInputForm", userInputForm);
             return modelAndView;
         }
-        User user = userRepository.add(User.create(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword()));
+        String activationToken = User.newToken();
+        User user = userRepository.add(User.create(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword(), activationToken));
         try {
             String uri = uriComponentsBuilder
-                    .pathSegment("account_activation", user.getActivationToken(), "edit")
+                    .pathSegment("account_activation", activationToken, "edit")
                     .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
                     .toUriString();
             AccountActivationMail mail = new AccountActivationMail(user, uri);

@@ -7,6 +7,8 @@ import example.model.User;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,11 +29,11 @@ public class UserRepository {
             throw new IllegalArgumentException("user is already exists.");
         }
         UsersRecord record =
-                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_TOKEN)
-                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationToken())
+                dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_DIGEST)
+                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationDigest().getValue())
                     .returning(USERS.ID)
                     .fetchOne();
-        return User.from(record.getId(), user.getName(), user.getEmail(), user.getActivationToken());
+        return User.from(record.getId(), user.getName(), user.getEmail(), false, user.getActivationDigest().getValue());
     }
 
     public User update(User user, String name, String email, String password) {
@@ -50,7 +52,16 @@ public class UserRepository {
                     .where(USERS.ID.eq(user.getId()))
                     .execute();
         }
-        return User.from(user.getId(), name, email, user.getActivationToken());
+        return User.from(user.getId(), name, email, user.getActivated(), user.getActivationDigest().getValue());
+    }
+
+    public User updateActivate(User user, Instant activatedAt) {
+        dsl.update(USERS)
+                .set(USERS.ACTIVATED, true)
+                .set(USERS.ACTIVATED_AT, Timestamp.from(activatedAt))
+                .where(USERS.ID.eq(user.getId()))
+                .execute();
+        return User.from(user.getId(), user.getName(), user.getEmail(), true, user.getActivationDigest().getValue());
     }
 
     public Optional<User> findById(int id) {
@@ -60,7 +71,20 @@ public class UserRepository {
                         r.getId(),
                         r.getName(),
                         r.getEmail(),
-                        r.getActivationToken()
+                        r.getActivated(),
+                        r.getActivationDigest()
+                ));
+    }
+
+    public Optional<User> findByEmail(String email) {
+        Optional<UsersRecord> record = dsl.select().from(USERS).where(USERS.EMAIL.eq(email)).fetchOptionalInto(UsersRecord.class);
+        return record.map(r ->
+                User.from(
+                        r.getId(),
+                        r.getName(),
+                        r.getEmail(),
+                        r.getActivated(),
+                        r.getActivationDigest()
                 ));
     }
 
@@ -73,7 +97,8 @@ public class UserRepository {
                         r.getId(),
                         r.getName(),
                         r.getEmail(),
-                        r.getActivationToken()))
+                        r.getActivated(),
+                        r.getActivationDigest()))
                 .collect(Collectors.toList());
     }
 
