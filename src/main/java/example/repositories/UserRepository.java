@@ -1,19 +1,17 @@
 package example.repositories;
 
-import example.util.DigestFactory;
 import example.jooq.tables.records.UsersRecord;
-import example.util.Digest;
 import example.model.User;
+import example.util.Digest;
+import example.util.DigestFactory;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static example.jooq.Tables.*;
+import static example.jooq.Tables.USERS;
 
 @Repository
 public class UserRepository {
@@ -24,25 +22,24 @@ public class UserRepository {
         this.dsl = dsl;
     }
 
-    public User add(User user) {
+    public User add(User user, Digest passwordDigest, Digest activationDigest) {
         if (user.getId() != null) {
             throw new IllegalArgumentException("user is already exists.");
         }
         UsersRecord record =
                 dsl.insertInto(USERS, USERS.NAME, USERS.EMAIL, USERS.PASSWORD_DIGEST, USERS.ACTIVATED, USERS.ACTIVATION_DIGEST)
-                    .values(user.getName(), user.getEmail(), user.getPasswordDigest().getValue(), false, user.getActivationDigest().getValue())
+                    .values(user.getName(), user.getEmail(), passwordDigest.getValue(), false, activationDigest.getValue())
                     .returning(USERS.ID)
                     .fetchOne();
-        return User.from(record.getId(), user.getName(), user.getEmail(), false, user.getActivationDigest().getValue());
+        return User.from(record.getId(), user.getName(), user.getEmail());
     }
 
-    public User update(User user, String name, String email, String password) {
-        if (password != null) {
-            Digest digest = DigestFactory.create(password);
+    public User update(User user, String name, String email, Digest passwordDigest) {
+        if (passwordDigest != null) {
             dsl.update(USERS)
                     .set(USERS.NAME, name)
                     .set(USERS.EMAIL, email)
-                    .set(USERS.PASSWORD_DIGEST, digest.getValue())
+                    .set(USERS.PASSWORD_DIGEST, passwordDigest.getValue())
                     .where(USERS.ID.eq(user.getId()))
                     .execute();
         } else {
@@ -52,40 +49,19 @@ public class UserRepository {
                     .where(USERS.ID.eq(user.getId()))
                     .execute();
         }
-        return User.from(user.getId(), name, email, user.getActivated(), user.getActivationDigest().getValue());
-    }
-
-    public User updateActivate(User user, Instant activatedAt) {
-        dsl.update(USERS)
-                .set(USERS.ACTIVATED, true)
-                .set(USERS.ACTIVATED_AT, Timestamp.from(activatedAt))
-                .where(USERS.ID.eq(user.getId()))
-                .execute();
-        return User.from(user.getId(), user.getName(), user.getEmail(), true, user.getActivationDigest().getValue());
+        return User.from(user.getId(), name, email);
     }
 
     public Optional<User> findById(int id) {
         Optional<UsersRecord> record = dsl.select().from(USERS).where(USERS.ID.eq(id)).fetchOptionalInto(UsersRecord.class);
         return record.map(r ->
-                User.from(
-                        r.getId(),
-                        r.getName(),
-                        r.getEmail(),
-                        r.getActivated(),
-                        r.getActivationDigest()
-                ));
+                User.from(r.getId(), r.getName(), r.getEmail()));
     }
 
     public Optional<User> findByEmail(String email) {
         Optional<UsersRecord> record = dsl.select().from(USERS).where(USERS.EMAIL.eq(email)).fetchOptionalInto(UsersRecord.class);
         return record.map(r ->
-                User.from(
-                        r.getId(),
-                        r.getName(),
-                        r.getEmail(),
-                        r.getActivated(),
-                        r.getActivationDigest()
-                ));
+                User.from(r.getId(), r.getName(), r.getEmail()));
     }
 
     public List<User> select(int limit, int offset) {
@@ -93,12 +69,7 @@ public class UserRepository {
                 .fetch()
                 .into(UsersRecord.class)
                 .stream()
-                .map(r -> User.from(
-                        r.getId(),
-                        r.getName(),
-                        r.getEmail(),
-                        r.getActivated(),
-                        r.getActivationDigest()))
+                .map(r -> User.from(r.getId(), r.getName(), r.getEmail()))
                 .collect(Collectors.toList());
     }
 

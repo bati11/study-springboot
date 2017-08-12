@@ -5,6 +5,7 @@ import example.auth.LoginAccountRepository
 import example.model.LoginAccount
 import example.model.User
 import example.repositories.UserRepository
+import example.util.DigestFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -41,7 +42,11 @@ abstract class AbstractSpecification extends Specification {
     User testUser
 
     def setup() {
-        testUser = userRepository.add(User.create("test_user", TEST_USER_EMAIL, TEST_USER_PASSWORD))
+        testUser = userRepository.add(
+                User.create("test_user", TEST_USER_EMAIL),
+                DigestFactory.create(TEST_USER_PASSWORD),
+                DigestFactory.create("abc")
+        )
     }
 
     def get(String path) {

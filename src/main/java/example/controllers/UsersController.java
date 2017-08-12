@@ -1,18 +1,17 @@
 package example.controllers;
 
-import example.auth.LoginAccountRepository;
 import example.controllers.exceptions.NotFoundException;
 import example.controllers.forms.UserEditForm;
 import example.controllers.forms.UserInputForm;
 import example.model.AccountActivationMail;
+import example.model.LoginAccount;
 import example.model.User;
 import example.repositories.UserRepository;
 import example.service.SendAccountActivationMailService;
+import example.util.Digest;
+import example.util.DigestFactory;
 import example.view.Pager;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -35,15 +34,12 @@ import java.util.Optional;
 public class UsersController {
 
     private UserRepository userRepository;
-    private LoginAccountRepository loginAccountRepository;
     private SendAccountActivationMailService sendAccountActivationMailService;
 
     public UsersController(
             UserRepository userRepository,
-            LoginAccountRepository loginAccountRepository,
             SendAccountActivationMailService sendAccountActivationMailService) {
         this.userRepository = userRepository;
-        this.loginAccountRepository = loginAccountRepository;
         this.sendAccountActivationMailService = sendAccountActivationMailService;
     }
 
@@ -81,8 +77,13 @@ public class UsersController {
             modelAndView.addObject("userInputForm", userInputForm);
             return modelAndView;
         }
-        String activationToken = User.newToken();
-        User user = userRepository.add(User.create(userInputForm.getName(), userInputForm.getEmail(), userInputForm.getPassword(), activationToken));
+        Digest passwordDigest = DigestFactory.create(userInputForm.getPassword());
+        String activationToken = LoginAccount.newToken();
+        Digest activationDigest = DigestFactory.create(activationToken);
+        User user = userRepository.add(
+                User.create(userInputForm.getName(), userInputForm.getEmail()),
+                passwordDigest,
+                activationDigest);
         try {
             String uri = uriComponentsBuilder
                     .pathSegment("account_activation", activationToken, "edit")
@@ -126,7 +127,11 @@ public class UsersController {
             modelAndView.addObject("user", user);
             return modelAndView;
         }
-        User updatedUser = userRepository.update(user, userEditForm.getName(), userEditForm.getEmail(), userEditForm.getPassword());
+        User updatedUser = userRepository.update(
+                user,
+                userEditForm.getName(),
+                userEditForm.getEmail(),
+                DigestFactory.create(userEditForm.getPassword()));
 
         redirectAttributes.addFlashAttribute("success", "Profile updated");
         return new ModelAndView(("redirect:/users/" + updatedUser.getId()));

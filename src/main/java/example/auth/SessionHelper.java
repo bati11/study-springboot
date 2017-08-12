@@ -1,11 +1,9 @@
 package example.auth;
 
 import example.model.LoginAccount;
-import example.model.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -57,8 +55,7 @@ public class SessionHelper {
         return (authentication != null) && (authentication.getPrincipal() instanceof LoginAccount);
     }
 
-    public void login(User user) {
-        UserDetails loginAccount = loginAccountRepository.loadUserByUsername(user.getEmail());
+    public void login(LoginAccount loginAccount) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginAccount, "", loginAccount.getAuthorities());
         authenticationToken.eraseCredentials();

@@ -2,7 +2,6 @@ package example.util;
 
 import lombok.NonNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 
 public class DigestFactory {
 
@@ -11,9 +10,9 @@ public class DigestFactory {
         return result;
     }
 
-    public static Digest create(@NonNull String rawPassword) {
+    public static Digest create(@NonNull String rawString) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String value = bCryptPasswordEncoder.encode(rawPassword);
+        String value = bCryptPasswordEncoder.encode(rawString);
         Digest result = new Digest(value);
         return result;
     }

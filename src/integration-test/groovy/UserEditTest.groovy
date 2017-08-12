@@ -1,5 +1,6 @@
 import example.model.LoginAccount
 import example.model.User
+import example.util.DigestFactory
 import integrationtestutils.AbstractSpecification
 import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithMockUser
@@ -37,8 +38,8 @@ class UserEditTest extends AbstractSpecification {
         HttpHeaders params = new HttpHeaders()
         params.put("name", ["Foo Bar"])
         params.put("email", ["foo@bar.com"])
-        params.put("password", [""])
-        params.put("passwordConfirmation", [""])
+        params.put("password", ["123456"])
+        params.put("passwordConfirmation", ["123456"])
 
         when:
         def result = post("/users/${testUser.id}/update", params, testUserLoginAccount)
@@ -55,7 +56,11 @@ class UserEditTest extends AbstractSpecification {
 
     def "should redirect update when logged in as wrong user"() {
         setup:
-        def otherUser = userRepository.add(User.create("other_user", "other_user@example.com", "222"))
+        def otherUser = userRepository.add(
+                User.create("other_user", "other_user@example.com"),
+                DigestFactory.create("222"),
+                DigestFactory.create("other_user_activation_token")
+        )
         def loginAccount = loginAccountRepository.loadUserByUsername(otherUser.email)
 
         expect:

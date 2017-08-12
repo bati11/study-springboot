@@ -1,4 +1,5 @@
 import example.model.User
+import example.util.DigestFactory
 import integrationtestutils.AbstractSpecification
 
 class SessionsTest extends AbstractSpecification {
@@ -12,7 +13,11 @@ class SessionsTest extends AbstractSpecification {
 
     def "login with valid information"() {
         setup:
-        def user = userRepository.add(User.create("hoge1", "hoge1@example.com", "123456"))
+        def user = userRepository.add(
+                User.create("hoge1", "hoge1@example.com"),
+                DigestFactory.create("123456"),
+                DigestFactory.create("hoge1_activation_token")
+        )
 
         when:
         def result = login(user.email, "123456")

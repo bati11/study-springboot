@@ -35,7 +35,7 @@ class SendAccountActivationMailServiceTest extends Specification {
 
     def "send account activation mail"() {
         when:
-        def user = User.from(1, "hoge", "hoge@example.com", "abc")
+        def user = User.from(1, "hoge", "hoge@example.com")
         AccountActivationMail mail = new AccountActivationMail(user, "http://activation.example.com")
         target.execute(mail)
 
