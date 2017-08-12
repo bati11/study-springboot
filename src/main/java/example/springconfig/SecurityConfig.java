@@ -1,9 +1,6 @@
 package example.springconfig;
 
-import example.auth.ForwardingUrl;
-import example.auth.LoginAccountRepository;
-import example.auth.MyAccessDeniedHandler;
-import example.auth.MyLoginUrlAuthenticationEntryPoint;
+import example.auth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +14,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -58,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/login/success", true)
-                .failureUrl("/login?error=true")
+                .failureHandler(failureHandler())
                 .and();
 
         http.logout()
@@ -80,6 +81,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new example.auth.WebSecurity();
     }
 
+    @Bean
+    AuthenticationFailureHandler failureHandler() {
+        Map<String, String> exceptionMappings = new HashMap<>();
+        exceptionMappings.put(NotActivationException.class.getName(), "/login?unactivated=true");
+        ExceptionMappingAuthenticationFailureHandler failureHandler = new ExceptionMappingAuthenticationFailureHandler();
+
+        failureHandler.setDefaultFailureUrl("/login?error=true");
+        failureHandler.setExceptionMappings(exceptionMappings);
+        return failureHandler;
+    }
+
     /*
      * Settings for custom UserDetailsService
      */
@@ -94,7 +106,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(loginAccountRepository).passwordEncoder(passwordEncoder());
+        MyAuthenticationProvider myAuthenticationProvider = new MyAuthenticationProvider();
+        myAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        myAuthenticationProvider.setUserDetailsService(loginAccountRepository);
+        auth.authenticationProvider(myAuthenticationProvider);
     }
 
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Optional;
@@ -24,13 +25,16 @@ public class SessionsController {
     public ModelAndView input(
             LoginForm loginForm,
             @RequestParam Optional<Boolean> error,
-            @RequestParam Optional<Boolean> unlogin
+            @RequestParam Optional<Boolean> unlogin,
+            @RequestParam Optional<Boolean> unactivated
     ) {
         ModelAndView modelAndView = new ModelAndView("sessions/input");
         if (error.orElse(false)) {
             modelAndView.addObject("danger", "Invalid email/password combination");
         } else if (unlogin.orElse(false)) {
             modelAndView.addObject("danger", "Please log in.");
+        } else if (unactivated.orElse(false)) {
+            modelAndView.addObject("warning", "Account not activated. Check your email for the activation link.");
         }
         return modelAndView;
     }
@@ -41,16 +45,25 @@ public class SessionsController {
     }
 
     @RequestMapping(value = "/login/success")
-    public ModelAndView loginSuccess(@AuthenticationPrincipal LoginAccount loginAccount) throws UserPrincipalNotFoundException {
+    public ModelAndView loginSuccess(
+            @AuthenticationPrincipal LoginAccount loginAccount,
+            RedirectAttributes redirectAttributes
+    ) throws UserPrincipalNotFoundException {
         if (loginAccount == null) throw new UserPrincipalNotFoundException("loginSuccess");
 
-        if (forwardingUrl != null && forwardingUrl.getUrl() != null) {
-            String url = forwardingUrl.getUrl();
-            forwardingUrl.setUrl(null);
-            return new ModelAndView("redirect:" + url);
+        if (loginAccount.getActivated()) {
+            if (forwardingUrl != null && forwardingUrl.getUrl() != null) {
+                String url = forwardingUrl.getUrl();
+                forwardingUrl.setUrl(null);
+                return new ModelAndView("redirect:" + url);
+            } else {
+                return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
+            }
         } else {
-            return new ModelAndView("redirect:/users/" + loginAccount.getUserId().toString());
+            redirectAttributes.addFlashAttribute("warning", "Account not activated. Check your email for the activation link.");
+            return new ModelAndView("redirect:/");
         }
+
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
