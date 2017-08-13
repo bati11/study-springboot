@@ -56,11 +56,7 @@ class UserEditTest extends AbstractSpecification {
 
     def "should redirect update when logged in as wrong user"() {
         setup:
-        def otherUser = userRepository.add(
-                User.create("other_user", "other_user@example.com"),
-                DigestFactory.create("222"),
-                DigestFactory.create("other_user_activation_token")
-        )
+        def otherUser = createActivatedUser("other_user", "other_user@example.com", "222")
         def loginAccount = loginAccountRepository.loadUserByUsername(otherUser.email)
 
         expect:

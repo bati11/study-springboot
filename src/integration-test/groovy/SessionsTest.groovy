@@ -13,11 +13,7 @@ class SessionsTest extends AbstractSpecification {
 
     def "login with valid information"() {
         setup:
-        def user = userRepository.add(
-                User.create("hoge1", "hoge1@example.com"),
-                DigestFactory.create("123456"),
-                DigestFactory.create("hoge1_activation_token")
-        )
+        def user = createActivatedUser("hoge1", "hoge1@example.com", "123456")
 
         when:
         def result = login(user.email, "123456")

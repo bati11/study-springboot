@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.MultiValueMap
 import spock.lang.Specification
 
+import java.time.Instant
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = [Application.class])
 @AutoConfigureMockMvc
 @TestPropertySource("/application-integrationtest.properties")
@@ -42,11 +44,18 @@ abstract class AbstractSpecification extends Specification {
     User testUser
 
     def setup() {
-        testUser = userRepository.add(
-                User.create("test_user", TEST_USER_EMAIL),
-                DigestFactory.create(TEST_USER_PASSWORD),
-                DigestFactory.create("abc")
+        testUser = createActivatedUser("test_user", TEST_USER_EMAIL, TEST_USER_EMAIL)
+    }
+
+    def createActivatedUser(String name, String email, String password) {
+        def user = userRepository.add(
+                User.create(name, email),
+                DigestFactory.create(password),
+                DigestFactory.create("activation_token")
         )
+        def loginAccount = loginAccountRepository.loadUserByUsername(user.getEmail())
+        loginAccountRepository.updateActivate(loginAccount, Instant.now())
+        return user
     }
 
     def get(String path) {
