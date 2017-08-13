@@ -1,11 +1,9 @@
 package example.util;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Value;
 
-@EqualsAndHashCode
-@ToString
+@Value
 public class Digest {
 
     @Getter
