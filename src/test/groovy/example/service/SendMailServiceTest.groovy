@@ -3,7 +3,7 @@ package example.example.service
 import example.mail.MyMailSender
 import example.model.AccountActivationMail
 import example.model.User
-import example.service.SendAccountActivationMailService
+import example.service.SendMailService
 import org.mockito.ArgumentCaptor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,12 +16,12 @@ import java.util.regex.Pattern
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class SendAccountActivationMailServiceTest extends Specification {
+class SendMailServiceTest extends Specification {
     @Autowired
     MyMailSender myMailSender
 
     @Autowired
-    SendAccountActivationMailService target
+    SendMailService target
 
     ArgumentCaptor<MimeMessage> captor
 

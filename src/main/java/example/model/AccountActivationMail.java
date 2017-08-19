@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-public class AccountActivationMail {
+public class AccountActivationMail implements Mail {
     private final String subject;
     private final Map<String, Object> params = new HashMap<>();
     private final String from;

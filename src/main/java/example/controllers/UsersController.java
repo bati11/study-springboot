@@ -7,7 +7,7 @@ import example.model.AccountActivationMail;
 import example.model.LoginAccount;
 import example.model.User;
 import example.repositories.UserRepository;
-import example.service.SendAccountActivationMailService;
+import example.service.SendMailService;
 import example.util.Digest;
 import example.util.DigestFactory;
 import example.view.Pager;
@@ -34,13 +34,13 @@ import java.util.Optional;
 public class UsersController {
 
     private UserRepository userRepository;
-    private SendAccountActivationMailService sendAccountActivationMailService;
+    private SendMailService sendMailService;
 
     public UsersController(
             UserRepository userRepository,
-            SendAccountActivationMailService sendAccountActivationMailService) {
+            SendMailService sendMailService) {
         this.userRepository = userRepository;
-        this.sendAccountActivationMailService = sendAccountActivationMailService;
+        this.sendMailService = sendMailService;
     }
 
     @InitBinder
@@ -90,7 +90,7 @@ public class UsersController {
                     .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
                     .toUriString();
             AccountActivationMail mail = new AccountActivationMail(user, uri);
-            sendAccountActivationMailService.execute(mail);
+            sendMailService.execute(mail);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
