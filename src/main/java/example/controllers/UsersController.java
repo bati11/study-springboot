@@ -84,16 +84,10 @@ public class UsersController {
                 User.create(userInputForm.getName(), userInputForm.getEmail()),
                 passwordDigest,
                 activationDigest);
-        try {
-            String uri = uriComponentsBuilder
-                    .pathSegment("account_activation", activationToken, "edit")
-                    .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
-                    .toUriString();
-            AccountActivationMail mail = new AccountActivationMail(user, uri);
-            sendMailService.execute(mail);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+
+        String url = getAccountActivationUrl(uriComponentsBuilder, activationToken, user);
+        AccountActivationMail mail = new AccountActivationMail(user, url);
+        sendMailService.execute(mail);
 
         redirectAttributes.addFlashAttribute("success", "Please check your email to activate your account.");
         return new ModelAndView("redirect:/");
@@ -167,5 +161,17 @@ public class UsersController {
         int n = pageNumber.orElse(0);
         n = n < 1 ? 1 : n;
         return countPerPage * (n - 1);
+    }
+
+    private String getAccountActivationUrl(UriComponentsBuilder uriComponentsBuilder, String activationToken, User user) {
+        try {
+            String url = uriComponentsBuilder
+                    .pathSegment("account_activation", activationToken, "edit")
+                    .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
+                    .toUriString();
+            return url;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

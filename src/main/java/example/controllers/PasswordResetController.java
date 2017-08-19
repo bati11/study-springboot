@@ -66,17 +66,24 @@ public class PasswordResetController {
         String resetToken = LoginAccount.newToken();
         Digest resetDigest = DigestFactory.create(resetToken);
         loginAccountRepository.updatePasswordReset(loginAccount, resetDigest, Instant.now());
+
+        String url = getPasswordResetUrl(uriComponentsBuilder, resetToken, loginAccount);
+        PasswordResetMail mail = new PasswordResetMail(loginAccount.getUsername(), url);
+        sendMailService.execute(mail);
+
+        redirectAttributes.addFlashAttribute("success", "Email sent with password reset instructions");
+        return new ModelAndView("redirect:/");
+    }
+
+    private String getPasswordResetUrl(UriComponentsBuilder uriComponentsBuilder, String resetToken, LoginAccount loginAccount) {
         try {
-            String uri = uriComponentsBuilder
+            String url = uriComponentsBuilder
                     .pathSegment("password_resets", resetToken, "edit")
                     .queryParam("email", URLEncoder.encode(loginAccount.getUsername(), StandardCharsets.UTF_8.displayName()))
                     .toUriString();
-            PasswordResetMail mail = new PasswordResetMail(loginAccount.getUsername(), uri);
-            sendMailService.execute(mail);
+            return url;
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        redirectAttributes.addFlashAttribute("success", "Email sent with password reset instructions");
-        return new ModelAndView("redirect:/");
     }
 }
