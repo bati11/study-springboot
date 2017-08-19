@@ -2,9 +2,9 @@ package example.auth;
 
 import example.jooq.tables.records.UsersRecord;
 import example.model.LoginAccount;
+import example.util.Digest;
 import example.util.DigestFactory;
 import org.jooq.DSLContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
@@ -37,7 +37,8 @@ public class LoginAccountRepository implements UserDetailsService {
                 record.getPasswordDigest(),
                 record.getIsAdmin(),
                 record.getActivated(),
-                DigestFactory.fromDigest(record.getActivationDigest()));
+                DigestFactory.fromDigest(record.getActivationDigest()),
+                DigestFactory.fromDigest(record.getResetDigest()));
     }
 
     public LoginAccount updateActivate(LoginAccount loginAccount, Instant activatedAt) {
@@ -52,7 +53,25 @@ public class LoginAccountRepository implements UserDetailsService {
                 loginAccount.getPassword(),
                 loginAccount.getIsAdmin(),
                 true,
-                loginAccount.getActivationDigest());
+                loginAccount.getActivationDigest(),
+                loginAccount.getResetDigest());
+    }
+
+    public LoginAccount updatePasswordReset(LoginAccount loginAccount, Digest resetDigest, Instant resetSentAt) {
+        dsl.update(USERS)
+                .set(USERS.ACTIVATED, true)
+                .set(USERS.RESET_DIGEST, resetDigest.getValue())
+                .set(USERS.RESET_SENT_AT, Timestamp.from(resetSentAt))
+                .where(USERS.ID.eq(loginAccount.getUserId()))
+                .execute();
+        return new LoginAccount(
+                loginAccount.getUserId(),
+                loginAccount.getUsername(),
+                loginAccount.getPassword(),
+                loginAccount.getIsAdmin(),
+                true,
+                loginAccount.getActivationDigest(),
+                resetDigest);
     }
 
 }

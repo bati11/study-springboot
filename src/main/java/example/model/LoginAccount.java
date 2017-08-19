@@ -30,13 +30,25 @@ public class LoginAccount implements UserDetails {
     @Getter
     private Digest activationDigest;
 
-    public LoginAccount(Integer userId, String email, String passwordDigest, boolean isAdmin, boolean activated, Digest activationDigest) {
+    @Getter
+    private Digest resetDigest;
+
+    public LoginAccount(
+            Integer userId,
+            String email,
+            String passwordDigest,
+            boolean isAdmin,
+            boolean activated,
+            Digest activationDigest,
+            Digest resetDigest
+    ) {
         this.userId = userId;
         this.username = email;
         this.password = passwordDigest;
         this.isAdmin = isAdmin;
         this.activated = activated;
         this.activationDigest = activationDigest;
+        this.resetDigest = resetDigest;
 
         if (isAdmin) {
             GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ADMIN");

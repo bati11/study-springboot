@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN reset_digest VARCHAR;
+ALTER TABLE users ADD COLUMN reset_sent_at TIMESTAMP;

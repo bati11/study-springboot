@@ -1,0 +1,23 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/application">
+<head>
+    <title>Forgot password</title>
+</head>
+<body layout:fragment="content">
+<h1>Forgot password</h1>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form th:action="@{/password_resets}" th:object="${passwordResetEmailForm}" id="password_reset_email" method="post" >
+            <div class="user-email form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error has-feedback'">
+                <label for="email">Email</label>
+                <span class="text-danger" th:errors="*{email}">Error</span>
+                <input id="email" name="email" type="text" class="form-control" />
+            </div>
+
+            <input class="btn btn-primary" name="commit" type="submit" value="Submit" />
+        </form>
+    </div>
+</div>
+</body>
+</html>

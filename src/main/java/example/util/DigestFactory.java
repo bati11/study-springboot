@@ -5,9 +5,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class DigestFactory {
 
-    public static Digest fromDigest(@NonNull String digest) {
-        Digest result = new Digest(digest);
-        return result;
+    public static Digest fromDigest(String digest) {
+        if (digest == null || digest.equals("")) {
+            return null;
+        } else {
+            Digest result = new Digest(digest);
+            return result;
+        }
     }
 
     public static Digest create(@NonNull String rawString) {
