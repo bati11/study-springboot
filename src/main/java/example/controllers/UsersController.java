@@ -10,6 +10,7 @@ import example.repositories.UserRepository;
 import example.service.SendMailService;
 import example.util.Digest;
 import example.util.DigestFactory;
+import example.util.URLEncodeUtil;
 import example.view.Pager;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -24,9 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,14 +162,10 @@ public class UsersController {
     }
 
     private String getAccountActivationUrl(UriComponentsBuilder uriComponentsBuilder, String activationToken, User user) {
-        try {
-            String url = uriComponentsBuilder
-                    .pathSegment("account_activation", activationToken, "edit")
-                    .queryParam("email", URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8.displayName()))
-                    .toUriString();
-            return url;
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        String url = uriComponentsBuilder
+                .pathSegment("account_activation", activationToken, "edit")
+                .queryParam("email", URLEncodeUtil.encode(user.getEmail()))
+                .toUriString();
+        return url;
     }
 }

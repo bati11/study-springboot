@@ -1,0 +1,31 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/application">
+<head>
+    <title>Reset password</title>
+</head>
+<body layout:fragment="content">
+<h1>Reset password</h1>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form th:action="@{/password_resets/{token}/update(token=${token})}" th:object="${passwordResetForm}" class="password_reset" id="password_reset" method="post" >
+            <input id="user_email" name="email" th:field="*{email}" type="hidden" th:value="*{email}" />
+
+            <div class="user-password form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error has-feedback'">
+                <label for="user_password">Password</label>
+                <span class="text-danger" th:errors="*{password}">Error</span>
+                <input id="user_password" name="password" th:field="*{password}" type="password" class="form-control" />
+            </div>
+
+            <div class="user-password-confirmation form-group" th:classappend="${#fields.hasErrors('passwordConfirmation')}? 'has-error has-feedback'">
+                <label for="user_password_confirmation">Confirmation</label>
+                <span class="text-danger" th:errors="*{passwordConfirmation}">Error</span>
+                <input id="user_password_confirmation" name="passwordConfirmation" th:field="*{passwordConfirmation}" type="password" class="form-control" />
+            </div>
+
+            <input class="btn btn-primary" name="commit" type="submit" value="Update password" />
+        </form>
+    </div>
+</div>
+</body>
+</html>

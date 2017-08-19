@@ -38,7 +38,8 @@ public class LoginAccountRepository implements UserDetailsService {
                 record.getIsAdmin(),
                 record.getActivated(),
                 DigestFactory.fromDigest(record.getActivationDigest()),
-                DigestFactory.fromDigest(record.getResetDigest()));
+                DigestFactory.fromDigest(record.getResetDigest()),
+                record.getResetSentAt().toInstant());
     }
 
     public LoginAccount updateActivate(LoginAccount loginAccount, Instant activatedAt) {
@@ -54,7 +55,8 @@ public class LoginAccountRepository implements UserDetailsService {
                 loginAccount.getIsAdmin(),
                 true,
                 loginAccount.getActivationDigest(),
-                loginAccount.getResetDigest());
+                loginAccount.getResetDigest(),
+                loginAccount.getResetSentAt());
     }
 
     public LoginAccount updatePasswordReset(LoginAccount loginAccount, Digest resetDigest, Instant resetSentAt) {
@@ -71,7 +73,23 @@ public class LoginAccountRepository implements UserDetailsService {
                 loginAccount.getIsAdmin(),
                 true,
                 loginAccount.getActivationDigest(),
-                resetDigest);
+                resetDigest,
+                loginAccount.getResetSentAt());
     }
 
+    public LoginAccount updatePassword(LoginAccount loginAccount, Digest passwordDigest) {
+        dsl.update(USERS)
+                .set(USERS.PASSWORD_DIGEST, passwordDigest.getValue())
+                .where(USERS.ID.eq(loginAccount.getUserId()))
+                .execute();
+        return new LoginAccount(
+                loginAccount.getUserId(),
+                loginAccount.getUsername(),
+                passwordDigest.getValue(),
+                loginAccount.getIsAdmin(),
+                true,
+                loginAccount.getActivationDigest(),
+                loginAccount.getResetDigest(),
+                loginAccount.getResetSentAt());
+    }
 }

@@ -10,9 +10,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.Period;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.HOURS;
 
 public class LoginAccount implements UserDetails {
 
@@ -33,6 +38,9 @@ public class LoginAccount implements UserDetails {
     @Getter
     private Digest resetDigest;
 
+    @Getter
+    private Instant resetSentAt;
+
     public LoginAccount(
             Integer userId,
             String email,
@@ -40,7 +48,8 @@ public class LoginAccount implements UserDetails {
             boolean isAdmin,
             boolean activated,
             Digest activationDigest,
-            Digest resetDigest
+            Digest resetDigest,
+            Instant resetSentAt
     ) {
         this.userId = userId;
         this.username = email;
@@ -49,6 +58,7 @@ public class LoginAccount implements UserDetails {
         this.activated = activated;
         this.activationDigest = activationDigest;
         this.resetDigest = resetDigest;
+        this.resetSentAt = resetSentAt;
 
         if (isAdmin) {
             GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ADMIN");
@@ -109,9 +119,21 @@ public class LoginAccount implements UserDetails {
         return true;
     }
 
+    public String getEmail() {
+        return username;
+    }
+
     public boolean authenticatedActivation(String activationToken) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.matches(activationToken, this.activationDigest.getValue());
     }
 
+    public boolean authenticatedReset(String resetToken) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.matches(resetToken, this.resetDigest.getValue());
+    }
+
+    public boolean isResetExpiration() {
+        return Instant.now().isAfter(resetSentAt.plus(2, HOURS));
+    }
 }

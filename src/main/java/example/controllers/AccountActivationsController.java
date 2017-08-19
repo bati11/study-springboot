@@ -3,6 +3,7 @@ package example.controllers;
 import example.auth.LoginAccountRepository;
 import example.auth.SessionHelper;
 import example.model.LoginAccount;
+import example.util.URLEncodeUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,15 +36,8 @@ public class AccountActivationsController {
             RedirectAttributes redirectAttributes
     ) {
         Optional<LoginAccount> loginAccountOpt = email
-                .map(x -> {
-                    try {
-                        String decodedEmail = URLDecoder.decode(x, StandardCharsets.UTF_8.displayName());
-                        return loginAccountRepository.loadUserByUsername(decodedEmail);
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .filter(x -> !x.getActivated() && x.authenticatedActivation(token));
+                .map(s -> loginAccountRepository.loadUserByUsername(URLEncodeUtil.decode(s)))
+                .filter(loginAccount -> !loginAccount.getActivated() && loginAccount.authenticatedActivation(token));
         if (loginAccountOpt.isPresent()) {
             LoginAccount loginAccount = loginAccountOpt.get();
             loginAccountRepository.updateActivate(loginAccount, Instant.now());
