@@ -13,5 +13,6 @@ node_modules
 /integration-test-screenshots
 
 /db
-
-src/main/resources/static/css/style.css
+/database
+/src/main/resources/static/css/style.css
+/src/main/java/example/jooq/
